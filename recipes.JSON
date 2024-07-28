@@ -1,0 +1,194 @@
+{
+  "recipes": {
+    "1": {
+      "id": "1",
+      "title": "Spaghetti Carbonara",
+      "description": "A classic Italian pasta dish.",
+      "ingredients": [
+        "Spaghetti",
+        "Eggs",
+        "Pancetta",
+        "Parmesan Cheese"
+      ],
+      "steps": [
+        "Boil pasta",
+        "Cook pancetta",
+        "Mix eggs and cheese",
+        "Combine all"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg"
+    },
+    "2": {
+      "id": "2",
+      "title": "Banana Banana Bread",
+      "description": "The most delicious, moist loaf with loads of banana flavor.",
+      "ingredients": [
+        "Flour: All-purpose flour gives the banana bread structure.",
+        "Salt: A pinch of salt enhances the overall flavor, but it won't make the loaf taste salty.",
+        "Butter: A stick of butter lends richness, moisture, and irresistible flavor.",
+        "Brown sugar: Brown sugar sweetens things up and adds a hint of warmth.",
+        "Eggs: Eggs act as a binding agent, which means they hold the batter together.",
+        "Bananas: Of course, you'll need bananas! Choose overripe bananas"
+      ],
+      "steps": [
+        "Combine the dry ingredients in one bowl.",
+        "Beat the butter and sugar in another bowl. Add the eggs and mashed bananas.",
+        "Add the wet mixture to the dry mixture.",
+        "Pour the batter into a loaf pan and bake in a preheated oven."
+      ],
+      "imageUrl": "https://www.allrecipes.com/thmb/uNAqmxP5koW4TRZPHzqT4xAGQmI=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/4565477-a58aced17c53414681966140ec94ccce.jpg"
+    },
+    "3": {
+      "id": "3",
+      "title": "Chicken Alfredo",
+      "description": "A creamy pasta dish with chicken.",
+      "ingredients": [
+        "Fettuccine",
+        "Chicken Breast",
+        "Heavy Cream",
+        "Parmesan Cheese",
+        "Garlic"
+      ],
+      "steps": [
+        "Cook fettuccine",
+        "Cook chicken breast",
+        "Make Alfredo sauce with cream and cheese",
+        "Combine all"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/uxuyxu1503079976.jpg"
+    },
+    "4": {
+      "id": "4",
+      "title": "Caesar Salad",
+      "description": "A classic Caesar salad.",
+      "ingredients": [
+        "Romaine Lettuce",
+        "Caesar Dressing",
+        "Croutons",
+        "Parmesan Cheese",
+        "Lemon Juice"
+      ],
+      "steps": [
+        "Chop lettuce",
+        "Add dressing",
+        "Top with croutons and cheese",
+        "Add lemon juice"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg"
+    },
+    "5": {
+      "id": "5",
+      "title": "Beef Stroganoff",
+      "description": "A rich and creamy beef dish.",
+      "ingredients": [
+        "Beef",
+        "Mushrooms",
+        "Onions",
+        "Sour Cream",
+        "Beef Broth"
+      ],
+      "steps": [
+        "Cook beef",
+        "Saute mushrooms and onions",
+        "Add broth and simmer",
+        "Stir in sour cream"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/svprys1511176755.jpg"
+    },
+    "6": {
+      "id": "6",
+      "title": "Tacos",
+      "description": "Mexican street food at its finest.",
+      "ingredients": [
+        "Tortillas",
+        "Ground Beef",
+        "Lettuce",
+        "Tomato",
+        "Cheese"
+      ],
+      "steps": [
+        "Cook ground beef",
+        "Warm tortillas",
+        "Assemble tacos with toppings",
+        "Serve"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg"
+    },
+    "7": {
+      "id": "7",
+      "title": "Apple Pie",
+      "description": "A classic dessert with apples and cinnamon.",
+      "ingredients": [
+        "Apples",
+        "Pie Crust",
+        "Sugar",
+        "Cinnamon",
+        "Butter"
+      ],
+      "steps": [
+        "Prepare apples",
+        "Make pie crust",
+        "Fill crust with apples and sugar mixture",
+        "Bake"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/ssrrrs1511816605.jpg"
+    },
+    "8": {
+      "id": "8",
+      "title": "Chocolate Cake",
+      "description": "A rich and moist chocolate cake.",
+      "ingredients": [
+        "Flour",
+        "Cocoa Powder",
+        "Sugar",
+        "Eggs",
+        "Butter"
+      ],
+      "steps": [
+        "Mix dry ingredients",
+        "Add wet ingredients",
+        "Bake in oven",
+        "Frost with chocolate icing"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/tqrrsq1511794791.jpg"
+    },
+    "9": {
+      "id": "9",
+      "title": "Greek Salad",
+      "description": "A fresh salad with tomatoes, cucumbers, and feta.",
+      "ingredients": [
+        "Tomatoes",
+        "Cucumbers",
+        "Feta Cheese",
+        "Olives",
+        "Olive Oil"
+      ],
+      "steps": [
+        "Chop vegetables",
+        "Mix with feta and olives",
+        "Dress with olive oil",
+        "Serve"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg"
+    },
+    "10": {
+      "id": "10",
+      "title": "French Toast",
+      "description": "A sweet breakfast dish.",
+      "ingredients": [
+        "Bread",
+        "Eggs",
+        "Milk",
+        "Cinnamon",
+        "Maple Syrup"
+      ],
+      "steps": [
+        "Mix eggs and milk",
+        "Dip bread in mixture",
+        "Cook on griddle",
+        "Serve with syrup"
+      ],
+      "imageUrl": "https://www.themealdb.com/images/media/meals/kxqysy1581017010.jpg"
+    }
+  }
+}
