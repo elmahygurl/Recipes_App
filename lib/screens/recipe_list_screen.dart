@@ -12,6 +12,7 @@ class RecipeListScreen extends StatefulWidget {
 class _RecipeListScreenState extends State<RecipeListScreen> {
   List<Recipe> recipes = [];
   bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
@@ -23,45 +24,50 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       DatabaseReference recipesRef =
           FirebaseDatabase.instance.ref().child('recipes');
       DataSnapshot snapshot = await recipesRef.get();
+      //print('Snapshot: ${snapshot.value}'); // Debugging: Print the snapshot value
 
-      // Ensure the snapshot value is a Map
-      if (snapshot.value != null && snapshot.value is Map) {
-        print('snapshot. value is not null');
-        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
+      if (snapshot.value != null && snapshot.value is List) {
+        List<dynamic> dataList = snapshot.value as List<dynamic>;
 
-        List<Recipe> fetchedRecipes = data.entries.map((entry) {
-          Map<dynamic, dynamic> recipeData =
-              entry.value as Map<dynamic, dynamic>;
-          return Recipe(
-            id: entry.key.toString(),
-            title: recipeData['title'],
-            description: recipeData['description'],
-            ingredients: List<String>.from(recipeData['ingredients']),
-            steps: List<String>.from(recipeData['steps']),
-            imageUrl: recipeData['imageUrl'],
-          );
-        }).toList();
+        List<Recipe> fetchedRecipes = [];
 
-        // setState(() {
-        //   recipes = fetchedRecipes;
-        //   isLoading = false; // Set loading to false after data is fetched
-        // });
-        for (var recipe in fetchedRecipes) {
-        print('Recipe ID: ${recipe.id}');
-        print('Title: ${recipe.title}');
-        print('Description: ${recipe.description}');
-        print('Ingredients: ${recipe.ingredients}');
-        print('Steps: ${recipe.steps}');
-        print('Image URL: ${recipe.imageUrl}');
-        print('---');
+        for (var item in dataList) {
+          if (item != null && item is Map<dynamic, dynamic>) {
+            Map<dynamic, dynamic> recipeData = item;
+
+            fetchedRecipes.add(Recipe(
+              id: DateTime.now()
+                  .toIso8601String(), // Using current timestamp as a unique ID
+              title: recipeData['title'],
+              description: recipeData['description'],
+              ingredients: List<String>.from(recipeData['ingredients']),
+              steps: List<String>.from(recipeData['steps']),
+              imageUrl: recipeData['imageUrl'],
+            ));
+          }
+        }
+
+        setState(() {
+          recipes = fetchedRecipes;
+          isLoading = false; //after data is fetched
+        });
+
+        // for (var recipe in fetchedRecipes) {
+        //   print('Recipe ID: ${recipe.id}');
+        //   print('Title: ${recipe.title}');
+        //   print('Description: ${recipe.description}');
+        //   print('Ingredients: ${recipe.ingredients}');
+        //   print('Steps: ${recipe.steps}');
+        //   print('Image URL: ${recipe.imageUrl}');
+        //   print('---');
+        // }
+      } else {
+        //empty or invalid data
+        setState(() {
+          isLoading = false;
+        });
+        print("No data found or data is not in the expected format.");
       }
-    } else {
-      // Handle empty or invalid data
-      setState(() {
-        isLoading = false;
-      });
-      print("No data found or data is not in the expected format.");
-      } 
     } catch (error) {
       setState(() {
         isLoading = false;
@@ -73,52 +79,32 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('Recipes')),
-      ),
-      body: recipes.isEmpty
+      body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: recipes.length,
-              itemBuilder: (context, index) {
-                final recipe = recipes[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(recipe.title),
-                    subtitle: Text(recipe.description),
-                    leading: Image.network(recipe.imageUrl,
-                        width: 50, height: 60, fit: BoxFit.cover),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                RecipeDetailScreen(recipe: recipe)),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-      // body: ListView.builder(
-      //   itemCount: recipes.length,
-      //   itemBuilder: (context, index) {
-      //     final recipe = recipes[index];
-      //     return Card(
-      //       child: ListTile(
-      //         title: Text(recipe.title),
-      //         subtitle: Text(recipe.description),
-      //         leading: Image.network(recipe.imageUrl, width: 50, height: 60, fit: BoxFit.cover),
-      //         onTap: () {
-      //           Navigator.push(
-      //             context,
-      //             MaterialPageRoute(builder: (context) => RecipeDetailScreen(recipe: recipe)),
-      //           );
-      //         },
-      //       ),
-      //     );
-      //   },
-      // ),
+          : recipes.isEmpty
+              ? Center(child: Text('No recipes available.'))
+              : ListView.builder(
+                  itemCount: recipes.length,
+                  itemBuilder: (context, index) {
+                    final recipe = recipes[index];
+                    return Card(
+                      child: ListTile(
+                        title: Text(recipe.title),
+                        subtitle: Text(recipe.description),
+                        leading: Image.network(recipe.imageUrl,
+                            width: 50, height: 60, fit: BoxFit.cover),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    RecipeDetailScreen(recipe: recipe)),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
