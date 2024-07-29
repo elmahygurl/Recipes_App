@@ -22,15 +22,16 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Recipes App',
       theme: ThemeData(
-        primaryColor: Color.fromARGB(255, 110, 116, 165),
+        primaryColor: Color.fromARGB(201, 145, 91, 105),
         colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: Color.fromARGB(255, 107, 112, 160),
+          primary: Color.fromARGB(201, 247, 150, 174),
           secondary: const Color.fromARGB(255, 230, 214, 167),
         ),
       ),
       home: Scaffold(
         appBar: AppBar(
           title: Center(child: Text('Recipes App')),
+          backgroundColor: Color.fromARGB(255, 231, 206, 198)
         ),
         body: FutureBuilder(
           future: _fApp,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipes_app/models/recipe.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class RecipeDetailScreen extends StatefulWidget {
   final Recipe recipe;
@@ -12,6 +14,7 @@ class RecipeDetailScreen extends StatefulWidget {
 
 class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   late List<bool> _stepsCompleted;
+
   @override
   void initState() {
     super.initState();
@@ -26,54 +29,100 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //var isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    //var padding = isLandscape ? EdgeInsets.zero : EdgeInsets.all(16.0);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipe.title),
+        backgroundColor: const Color.fromARGB(255, 233, 124, 91),
       ),
-      body: LayoutBuilder(builder: (context, constraints) {
-        //double padding = constraints.maxWidth > 600 ? 10.0 : 16.0;
-        //double padding =10;
-        return Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ListView(
-            children: [
-              Image.network(widget.recipe.imageUrl),
-              SizedBox(height: 6),
-              Text(
-                'Ingredients',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              for (var ingredient in widget.recipe.ingredients)
-                Text(ingredient, style: Theme.of(context).textTheme.bodyLarge),
-              SizedBox(height: 20),
-              Text(
-                'Steps',
-                style: Theme.of(context).textTheme.displayMedium,
-              ),
-              for (var i = 0; i < widget.recipe.steps.length; i++)
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '${i + 1}. ${widget.recipe.steps[i]}',
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
-                    ),
-                    Checkbox(
-                      value: _stepsCompleted[i],
-                      onChanged: (bool? value) {
-                        _toggleStepCompletion(i);
-                      },
-                    ),
-                  ],
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: ListView(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15.0),
+
+                child: Image.network(
+                  widget.recipe.imageUrl,
+                  fit: BoxFit.fitWidth,
                 ),
-            ],
-          ),
-        );
-      }),
+              ),
+            ),
+            // Container(               //for zooming (pinching in and out)
+            //   height: MediaQuery.of(context).size.height * 0.4,
+            //   child: PhotoView(
+            //     imageProvider: NetworkImage(widget.recipe.imageUrl),
+            //     minScale: PhotoViewComputedScale.contained,
+            //     maxScale: PhotoViewComputedScale.covered * 2,
+            //   ),
+            // ),
+
+            SizedBox(height: 16),
+            Text(
+              'Ingredients',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepOrange,
+              ),
+            ),
+            SizedBox(height: 8),
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 8.0,
+              children: widget.recipe.ingredients.map((ingredient) {
+                return Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: Colors.white,
+                  ),
+                  child: Text(
+                    ingredient,
+                    style: TextStyle(fontSize: 18),
+                  ),
+                );
+              }).toList(),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Steps',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepOrange,
+              ),
+            ),
+            SizedBox(height: 8),
+            ...widget.recipe.steps.asMap().entries.map((entry) {
+              int idx = entry.key;
+              String step = entry.value;
+
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: ListTile(
+                  leading: Icon(
+                    _stepsCompleted[idx]
+                        ? Icons.check_box
+                        : Icons.check_box_outline_blank,
+                    color: Colors.deepOrange,
+                  ),
+                  title: Text(
+                    '${idx + 1}. $step',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  onTap: () {
+                    _toggleStepCompletion(idx);
+                  },
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
     );
   }
 }
