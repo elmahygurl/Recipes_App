@@ -37,7 +37,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
 
             fetchedRecipes.add(Recipe(
               id: DateTime.now()
-                  .toIso8601String(), // Using current timestamp as a unique ID
+                  .toIso8601String(), // using current timestamp as a unique ID
               title: recipeData['title'],
               description: recipeData['description'],
               ingredients: List<String>.from(recipeData['ingredients']),
@@ -87,22 +87,73 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
                     final recipe = recipes[index];
-                    return Card(
-                      child: ListTile(
-                        title: Text(recipe.title),
-                        subtitle: Text(recipe.description),
-                        leading: Image.network(recipe.imageUrl,
-                            width: 50, height: 60, fit: BoxFit.cover),
+                    return Center(
+                        child: Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      height: 200,
+                      margin:
+                          EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                      child: GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) =>
-                                    RecipeDetailScreen(recipe: recipe)),
+                              builder: (context) =>
+                                  RecipeDetailScreen(recipe: recipe),
+                            ),
                           );
                         },
+                        child: Card(
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.horizontal(
+                                    left: Radius.circular(12)),
+                                child: Image.network(
+                                  recipe.imageUrl,
+                                  fit: BoxFit.cover,
+                                  width: 140,
+                                  height: double.infinity,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        recipe.title,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        recipe.description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    );
+                    ));
                   },
                 ),
       floatingActionButton: FloatingActionButton(
