@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:recipes_app/models/recipe.dart';
 
@@ -10,9 +11,34 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _ingredientsController = TextEditingController();
-  final _stepsController = TextEditingController();
   final _imageUrlController = TextEditingController();
+
+  List<String> _NewIngredients = [];
+  List<String> _NewSteps = [];
+
+  void _addIngredient() {
+    setState(() {
+      _NewIngredients.add('');
+    });
+  }
+
+  void _removeIngredient(int index) {
+    setState(() {
+      _NewIngredients.removeAt(index);
+    });
+  }
+
+  void _addStep() {
+    setState(() {
+      _NewSteps.add('');
+    });
+  }
+
+  void _removeStep(int index) {
+    setState(() {
+      _NewSteps.removeAt(index);
+    });
+  }
 
   void _saveRecipe() {
     if (_formKey.currentState!.validate()) {
@@ -20,11 +46,11 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
         id: DateTime.now().toString(),
         title: _titleController.text,
         description: _descriptionController.text,
-        ingredients: _ingredientsController.text.split(','),
-        steps: _stepsController.text.split(','),
+        ingredients: _NewIngredients,
+        steps: _NewSteps,
         imageUrl: _imageUrlController.text,
       );
-      // Save the new recipe to your database or state management solution
+      //save the new recipe to database 
 
       Navigator.pop(context);
     }
@@ -34,7 +60,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Recipe'),
+        title: Text('Add a New Recipe'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -63,26 +89,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                 },
               ),
               TextFormField(
-                controller: _ingredientsController,
-                decoration: InputDecoration(labelText: 'Ingredients (comma separated)'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter ingredients';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _stepsController,
-                decoration: InputDecoration(labelText: 'Steps (comma separated)'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter steps';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
                 controller: _imageUrlController,
                 decoration: InputDecoration(labelText: 'Image URL'),
                 validator: (value) {
@@ -91,6 +97,80 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   }
                   return null;
                 },
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Ingredients',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ..._NewIngredients.asMap().entries.map((entry) {
+                int index = entry.key;
+                String ingredient = entry.value;
+                return Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        initialValue: ingredient,
+                        decoration: InputDecoration(
+                          hintText: 'Enter ingredient',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _NewIngredients[index] = value;
+                          });
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove_circle_outline),
+                      onPressed: () => _removeIngredient(index),
+                    ),
+                  ],
+                );
+              }).toList(),
+              IconButton(
+                icon: Icon(Icons.add_circle_outline),
+                onPressed: _addIngredient,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Steps',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ..._NewSteps.asMap().entries.map((entry) {
+                int index = entry.key;
+                String step = entry.value;
+                return Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        initialValue: step,
+                        decoration: InputDecoration(
+                          hintText: 'Enter step',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _NewSteps[index] = value;
+                          });
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove_circle_outline),
+                      onPressed: () => _removeStep(index),
+                    ),
+                  ],
+                );
+              }).toList(),
+              IconButton(
+                icon: Icon(Icons.add_circle_outline),
+                onPressed: _addStep,
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -104,3 +184,4 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     );
   }
 }
+
