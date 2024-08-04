@@ -8,8 +8,6 @@ import 'package:recipes_app/screens/add_recipe_screen.dart';
 import 'package:recipes_app/screens/signin.dart';
 import 'package:provider/provider.dart';
 
-
-
 class RecipeListScreen extends StatefulWidget {
   @override
   State<RecipeListScreen> createState() => _RecipeListScreenState();
@@ -83,9 +81,10 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       print("Error fetching data: $error");
     }
   }
+
   void _signOut() async {
-      String message = await _authService.signOut();
-      }
+    String message = await _authService.signOut();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +179,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(
-            context,          
+            context,
             MaterialPageRoute(
               builder: (context) => Provider.of<User?>(context) != null
                   ? AddRecipeScreen()

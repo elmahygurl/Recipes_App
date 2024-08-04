@@ -1,5 +1,7 @@
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
 
 class AddRecipeScreen extends StatefulWidget {
@@ -8,6 +10,9 @@ class AddRecipeScreen extends StatefulWidget {
 }
 
 class _AddRecipeScreenState extends State<AddRecipeScreen> {
+  final Authenticationservice _authService =
+      Authenticationservice(FirebaseAuth.instance);
+
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -32,6 +37,10 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     setState(() {
       _NewSteps.add('');
     });
+  }
+
+void _signOut() async {
+    String message = await _authService.signOut();
   }
 
   void _removeStep(int index) {
@@ -61,6 +70,12 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add a New Recipe'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _signOut,
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
