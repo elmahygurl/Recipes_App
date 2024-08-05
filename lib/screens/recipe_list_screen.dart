@@ -53,6 +53,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               ingredients: List<String>.from(recipeData['ingredients']),
               steps: List<String>.from(recipeData['steps']),
               imageUrl: recipeData['imageUrl'],
+              author: recipeData['author'],
             ));
           }
         }
@@ -121,6 +122,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       ingredients: List<String>.from(jsonMap['ingredients']),
       steps: List<String>.from(jsonMap['steps']),
       imageUrl: jsonMap['imageUrl'],
+      author: jsonMap['author'],
     );
   }
 
@@ -255,6 +257,14 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                                           fontSize: 16,
                                         ),
                                       ),
+                                      SizedBox(height: 8),
+                                    Text(
+                                      'By ${recipe.author}',
+                                      style: TextStyle(
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 14,
+                                      ),
+                                    ),
                                     ],
                                   ),
                                 ),

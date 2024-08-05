@@ -5,6 +5,8 @@ class Recipe {
   final List<String> ingredients;
   final List<String> steps;
   final String imageUrl;
+  final String author; 
+
 
   Recipe({
     required this.id,
@@ -13,5 +15,7 @@ class Recipe {
     required this.ingredients,
     required this.steps,
     required this.imageUrl,
+    required this.author, 
+
   });
 }

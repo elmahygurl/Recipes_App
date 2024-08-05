@@ -1,5 +1,6 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
@@ -49,21 +50,41 @@ void _signOut() async {
     });
   }
 
-  void _saveRecipe() {
-    if (_formKey.currentState!.validate()) {
-      final newRecipe = Recipe(
-        id: DateTime.now().toString(),
-        title: _titleController.text,
-        description: _descriptionController.text,
-        ingredients: _NewIngredients,
-        steps: _NewSteps,
-        imageUrl: _imageUrlController.text,
-      );
-      //save the new recipe to database 
+  // void _saveRecipe() {
+  //   if (_formKey.currentState!.validate()) {
+  //     final newRecipe = Recipe(
+  //       id: DateTime.now().toString(),
+  //       title: _titleController.text,
+  //       description: _descriptionController.text,
+  //       ingredients: _NewIngredients,
+  //       steps: _NewSteps,
+  //       imageUrl: _imageUrlController.text,
 
-      Navigator.pop(context);
-    }
+  //     );
+  //     //save the new recipe to database 
+  //     Navigator.pop(context);
+  //   }
+  // }
+  Future<void> _saveRecipe() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+    String author = user.displayName ?? user.email ?? 'Anonymous';
+    DatabaseReference recipesRef = FirebaseDatabase.instance.ref().child('recipes');
+
+    Map<String, dynamic> recipeData = {
+      'title': _titleController.text,
+      'description': _descriptionController.text,
+      'ingredients': _NewIngredients,
+      'steps': _NewSteps,
+      'imageUrl': _imageUrlController.text,
+      'author': author,
+    };
+
+    await recipesRef.push().set(recipeData);
+    Navigator.pop(context);
+
   }
+}
 
   @override
   Widget build(BuildContext context) {
