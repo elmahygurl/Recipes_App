@@ -42,22 +42,17 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
               height: MediaQuery.of(context).size.height * 0.4,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
-
-                child: Image.network(
-                  widget.recipe.imageUrl,
-                  fit: BoxFit.fitWidth,
+                child: PhotoView(
+                  imageProvider: NetworkImage(widget.recipe.imageUrl),
+                  minScale: PhotoViewComputedScale.contained,
+                  maxScale: PhotoViewComputedScale.contained * 2,
+                  initialScale: PhotoViewComputedScale.contained,
+                  backgroundDecoration: BoxDecoration(
+                    color: Colors.transparent,
+                  ),
                 ),
               ),
             ),
-            // Container(               //for zooming (pinching in and out)
-            //   height: MediaQuery.of(context).size.height * 0.4,
-            //   child: PhotoView(
-            //     imageProvider: NetworkImage(widget.recipe.imageUrl),
-            //     minScale: PhotoViewComputedScale.contained,
-            //     maxScale: PhotoViewComputedScale.covered * 2,
-            //   ),
-            // ),
-
             SizedBox(height: 16),
             Text(
               'Ingredients',
