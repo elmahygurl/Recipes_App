@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
@@ -9,7 +11,6 @@ import 'package:recipes_app/screens/signin.dart';
 import 'package:provider/provider.dart';
 import 'package:recipes_app/Encrypttt/aes_helper.dart';
 
-
 class RecipeListScreen extends StatefulWidget {
   @override
   State<RecipeListScreen> createState() => _RecipeListScreenState();
@@ -20,8 +21,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   bool isLoading = true;
   final Authenticationservice _authService =
       Authenticationservice(FirebaseAuth.instance);
-      final AESHelper aesHelper = AESHelper();
-
+  final AESHelper aesHelper = AESHelper();
 
   @override
   void initState() {
@@ -90,8 +90,43 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
     String message = await _authService.signOut();
   }
 
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // helpwer function to convert JSON string to Recipe object
+  Recipe deserializeRecipe(String jsonString) {
+    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+
+    return Recipe(
+      id: DateTime.now().toIso8601String(),
+      title: jsonMap['title'],
+      description: jsonMap['description'],
+      ingredients: List<String>.from(jsonMap['ingredients']),
+      steps: List<String>.from(jsonMap['steps']),
+      imageUrl: jsonMap['imageUrl'],
+    );
+  }
+
   void _showRecipeOfTheDayDialog() async {
     TextEditingController controller = TextEditingController();
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -104,30 +139,38 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         actions: [
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop();
-              int luckyNumber = int.parse(controller.text);
-              String recipeOfTheDay = await aesHelper.getRecipeOfTheDay(luckyNumber);
-              _showRecipeOfTheDay(recipeOfTheDay);
+              String input = controller.text;
+              if (input.isEmpty) {
+                _showErrorDialog(context, 'Please enter your lucky number');
+              } else {
+                try {
+                  int userInput = int.parse(input);
+                  int mappedNumber =
+                      11 + (userInput % 9); //map input to be from 11 to 19
+                  if (mappedNumber < 11) {
+                    mappedNumber = 11;
+                  } else if (mappedNumber > 19) {
+                    mappedNumber = 19;
+                  }
+
+                  String recipeOfTheDay =
+                      await aesHelper.getRecipeOfTheDay(mappedNumber);
+
+                  Recipe recipe = deserializeRecipe(recipeOfTheDay);
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RecipeDetailScreen(recipe: recipe),
+                    ),
+                  );
+                } catch (e) {
+                  _showErrorDialog(
+                      context, 'Error fetching recipe. Please try again. $e');
+                }
+              }
             },
             child: Text('Get Recipe'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showRecipeOfTheDay(String recipe) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Recipe of the Day'),
-        content: Text(recipe),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text('Close'),
           ),
         ],
       ),
@@ -238,10 +281,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Provider.of<User?>(context) != null
-                            ? AddRecipeScreen()
-                            : SignInScreen(),
-                      ),
+                          builder: (context) => AddRecipeScreen()),
                     );
                   },
                 ),
