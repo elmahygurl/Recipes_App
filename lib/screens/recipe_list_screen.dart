@@ -7,6 +7,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:recipes_app/screens/add_recipe_screen.dart';
 import 'package:recipes_app/screens/signin.dart';
 import 'package:provider/provider.dart';
+import 'package:recipes_app/Encrypttt/aes_helper.dart';
+
 
 class RecipeListScreen extends StatefulWidget {
   @override
@@ -18,6 +20,8 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   bool isLoading = true;
   final Authenticationservice _authService =
       Authenticationservice(FirebaseAuth.instance);
+      final AESHelper aesHelper = AESHelper();
+
 
   @override
   void initState() {
@@ -84,6 +88,50 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
 
   void _signOut() async {
     String message = await _authService.signOut();
+  }
+
+  void _showRecipeOfTheDayDialog() async {
+    TextEditingController controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Enter your lucky number'),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          decoration: InputDecoration(hintText: 'Lucky number'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              Navigator.of(context).pop();
+              int luckyNumber = int.parse(controller.text);
+              String recipeOfTheDay = await aesHelper.getRecipeOfTheDay(luckyNumber);
+              _showRecipeOfTheDay(recipeOfTheDay);
+            },
+            child: Text('Get Recipe'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRecipeOfTheDay(String recipe) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Recipe of the Day'),
+        content: Text(recipe),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Close'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -178,12 +226,34 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Provider.of<User?>(context) != null
-                  ? AddRecipeScreen()
-                  : SignInScreen(),
+          showModalBottomSheet(
+            context: context,
+            builder: (context) => Wrap(
+              children: [
+                ListTile(
+                  leading: Icon(Icons.add),
+                  title: Text('Add Recipe'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Provider.of<User?>(context) != null
+                            ? AddRecipeScreen()
+                            : SignInScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.star),
+                  title: Text('Get Recipe of the Day'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _showRecipeOfTheDayDialog();
+                  },
+                ),
+              ],
             ),
           );
         },
