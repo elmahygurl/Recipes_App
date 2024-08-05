@@ -181,7 +181,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Recipe List'),
+        title: Center(child: Text('Recipe List')),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.logout),
