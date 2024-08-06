@@ -53,7 +53,15 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 10),
+            Text(
+              'By ${widget.recipe.author}',
+              style: TextStyle(
+                fontStyle: FontStyle.italic,
+                fontSize: 20,
+              ),
+            ),
+            SizedBox(height: 8),
             Text(
               'Ingredients',
               style: TextStyle(
