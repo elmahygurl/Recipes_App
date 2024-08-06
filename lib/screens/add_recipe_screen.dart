@@ -1,9 +1,9 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
+import 'package:recipes_app/Image/image_input_field.dart';
 
 class AddRecipeScreen extends StatefulWidget {
   @override
@@ -40,7 +40,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     });
   }
 
-void _signOut() async {
+  void _signOut() async {
     String message = await _authService.signOut();
   }
 
@@ -51,28 +51,31 @@ void _signOut() async {
   }
 
   Future<void> _saveRecipe() async {
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null && _formKey.currentState!.validate()) {
-    String? author =  user.email;
-    DatabaseReference recipesRef = FirebaseDatabase.instance.ref().child('recipes');
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null && _formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-    Map<String, dynamic> recipeData = {
-      'title': _titleController.text,
-      'description': _descriptionController.text,
-      'ingredients': _NewIngredients,
-      'steps': _NewSteps,
-      'imageUrl': _imageUrlController.text,
-      'author': author,
-    };
+      String? author = user.email;
+      DatabaseReference recipesRef =
+          FirebaseDatabase.instance.ref().child('recipes');
 
-    await recipesRef.push().set(recipeData);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
-      content: Text('Thanks for sharing your masterpiece')));
+      Map<String, dynamic> recipeData = {
+        'title': _titleController.text,
+        'description': _descriptionController.text,
+        'ingredients': _NewIngredients,
+        'steps': _NewSteps,
+        'imageUrl': _imageUrlController.text,
+        'author': author,
+      };
 
-    Navigator.pop(context);
+      await recipesRef.push().set(recipeData);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
+          content: Text('Thanks for sharing your masterpiece')));
 
+      Navigator.pop(context);
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -112,16 +115,7 @@ void _signOut() async {
                   return null;
                 },
               ),
-              TextFormField(
-                controller: _imageUrlController,
-                decoration: InputDecoration(labelText: 'Image URL'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an image URL';
-                  }
-                  return null;
-                },
-              ),
+              ImageInputField(controller: _imageUrlController),
               SizedBox(height: 20),
               Text(
                 'Ingredients',
@@ -208,4 +202,3 @@ void _signOut() async {
     );
   }
 }
-
