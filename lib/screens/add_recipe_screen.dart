@@ -50,25 +50,10 @@ void _signOut() async {
     });
   }
 
-  // void _saveRecipe() {
-  //   if (_formKey.currentState!.validate()) {
-  //     final newRecipe = Recipe(
-  //       id: DateTime.now().toString(),
-  //       title: _titleController.text,
-  //       description: _descriptionController.text,
-  //       ingredients: _NewIngredients,
-  //       steps: _NewSteps,
-  //       imageUrl: _imageUrlController.text,
-
-  //     );
-  //     //save the new recipe to database 
-  //     Navigator.pop(context);
-  //   }
-  // }
   Future<void> _saveRecipe() async {
   final user = FirebaseAuth.instance.currentUser;
-  if (user != null) {
-    String author = user.displayName ?? user.email ?? 'Anonymous';
+  if (user != null && _formKey.currentState!.validate()) {
+    String? author =  user.email;
     DatabaseReference recipesRef = FirebaseDatabase.instance.ref().child('recipes');
 
     Map<String, dynamic> recipeData = {
@@ -81,6 +66,9 @@ void _signOut() async {
     };
 
     await recipesRef.push().set(recipeData);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
+      content: Text('Thanks for sharing your masterpiece')));
+
     Navigator.pop(context);
 
   }
