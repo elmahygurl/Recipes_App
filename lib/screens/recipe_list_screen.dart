@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
+import 'package:recipes_app/screens/myrecipes.dart';
 import 'package:recipes_app/screens/recipe_detail_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:recipes_app/screens/add_recipe_screen.dart';
@@ -185,6 +186,17 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       appBar: AppBar(
         title: Center(child: Text('Recipe List')),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.restaurant),
+            onPressed: (){
+                    //Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyRecipesScreen()),
+                    );
+                  },
+          ),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: _signOut,
