@@ -5,6 +5,8 @@ import 'package:hive/hive.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
 import 'package:recipes_app/Image/image_input_field.dart';
+import 'dart:io';
+import 'dart:typed_data';
 
 class AddRecipeScreen extends StatefulWidget {
   @override
@@ -22,6 +24,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   List<String> _NewIngredients = [];
   List<String> _NewSteps = [];
+  File? _imageFile;
 
   void _addIngredient() {
     setState(() {
@@ -51,37 +54,70 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     });
   }
 
-  Future<void> _saveRecipe() async {
+  // Future<void> _saveRecipe() async {
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user != null && _formKey.currentState!.validate()) {
+  //     _formKey.currentState!.save();
+
+  //     final newRecipe = Recipe(
+  //       id: user.uid,
+  //       title: _titleController.text,
+  //       description: _descriptionController.text,
+  //       ingredients: _NewIngredients,
+  //       steps: _NewSteps,
+  //       imageUrl: _imageUrlController.text,
+  //       author: user.email!,
+  //     );
+
+  //     print(newRecipe);
+  //     final box = Hive.box<Recipe>('user_recipes');
+  //     await box.add(newRecipe);
+
+  //     //  for saving in realtime database on Firebase
+  //     // DatabaseReference recipesRef =
+  //     //     FirebaseDatabase.instance.ref().child('recipes');
+  //     // await recipesRef.push().set({
+  //     //   'id': user.uid,
+  //     //   'title': _titleController.text,
+  //     //   'description': _descriptionController.text,
+  //     //   'ingredients': _NewIngredients,
+  //     //   'steps': _NewSteps,
+  //     //   'imageUrl': _imageUrlController.text,
+  //     //   'author': user.email,
+  //     // });
+
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //         backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
+  //         content: Text('Thanks for sharing your masterpiece')));
+
+  //     Navigator.pop(context);
+  //   }
+  // }
+    Future<void> _saveRecipe() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      final newRecipe = Recipe(
+      String? author = user.email;
+
+      Uint8List? imageBytes;
+      if (_imageFile != null) {
+        imageBytes = await _imageFile!.readAsBytes();
+      }
+
+      Recipe newRecipe = Recipe(
         id: user.uid,
         title: _titleController.text,
         description: _descriptionController.text,
         ingredients: _NewIngredients,
         steps: _NewSteps,
-        imageUrl: _imageUrlController.text,
-        author: user.email!,
+        imageUrl: _imageFile == null ? _imageUrlController.text : null,
+        imageBlob: imageBytes,
+        author: author!,
       );
 
-      print(newRecipe);
       final box = Hive.box<Recipe>('user_recipes');
       await box.add(newRecipe);
-
-      //  for saving in realtime database on Firebase
-      // DatabaseReference recipesRef =
-      //     FirebaseDatabase.instance.ref().child('recipes');
-      // await recipesRef.push().set({
-      //   'id': user.uid,
-      //   'title': _titleController.text,
-      //   'description': _descriptionController.text,
-      //   'ingredients': _NewIngredients,
-      //   'steps': _NewSteps,
-      //   'imageUrl': _imageUrlController.text,
-      //   'author': user.email,
-      // });
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
@@ -90,6 +126,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       Navigator.pop(context);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

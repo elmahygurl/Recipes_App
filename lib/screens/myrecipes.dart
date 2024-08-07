@@ -55,10 +55,21 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
               : ListView.builder(
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
-                    final recipe = recipes[index];
-                    return ListTile(
-                      title: Text(recipe.title),
-                      subtitle: Text(recipe.description),
+                  final recipe = recipes[index];
+                  return ListTile(
+                    title: Text(recipe.title),
+                    subtitle: Text(recipe.description),
+                    leading: recipe.imageBlob != null
+                        ? Image.memory(recipe.imageBlob!)
+                        : recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
+                            ? Image.network(recipe.imageUrl!)
+                            : null,
+
+                  // itemBuilder: (context, index) {
+                  //   final recipe = recipes[index];
+                  //   return ListTile(
+                  //     title: Text(recipe.title),
+                  //     subtitle: Text(recipe.description),
                       onTap: () {
                         Navigator.push(
                           context,

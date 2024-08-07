@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'dart:typed_data';
 
 part 'recipe.g.dart';
 
@@ -20,9 +21,12 @@ class Recipe extends HiveObject {
   final List<String> steps;
 
   @HiveField(5)
-  final String imageUrl;
+  String? imageUrl;
 
   @HiveField(6)
+  Uint8List? imageBlob;
+  
+  @HiveField(7)
   final String author;
 
   Recipe({
@@ -31,8 +35,8 @@ class Recipe extends HiveObject {
     required this.description,
     required this.ingredients,
     required this.steps,
-    required this.imageUrl,
+    this.imageUrl,
+    this.imageBlob,
     required this.author,
   });
 }
-

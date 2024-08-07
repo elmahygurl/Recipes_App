@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,13 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         for (var item in dataList) {
           if (item != null && item is Map<dynamic, dynamic>) {
             Map<dynamic, dynamic> recipeData = item;
+            Uint8List? imageBlob;
+
+            if (recipeData['imageBlob'] != null) {
+
+              imageBlob = base64Decode(recipeData['imageBlob']);
+
+            }
 
             fetchedRecipes.add(Recipe(
               id: DateTime.now()
@@ -54,6 +62,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               ingredients: List<String>.from(recipeData['ingredients']),
               steps: List<String>.from(recipeData['steps']),
               imageUrl: recipeData['imageUrl'],
+              imageBlob: imageBlob,
               author: recipeData['author'],
             ));
           }
@@ -115,6 +124,13 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   // helpwer function to convert JSON string to Recipe object
   Recipe deserializeRecipe(String jsonString) {
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    Uint8List? imageBlob;
+
+    if (jsonMap['imageBlob'] != null) {
+
+      imageBlob = base64Decode(jsonMap['imageBlob']);
+
+    }
 
     return Recipe(
       id: DateTime.now().toIso8601String(),
@@ -123,6 +139,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       ingredients: List<String>.from(jsonMap['ingredients']),
       steps: List<String>.from(jsonMap['steps']),
       imageUrl: jsonMap['imageUrl'],
+      imageBlob: imageBlob,
       author: jsonMap['author'],
     );
   }
@@ -238,12 +255,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                               ClipRRect(
                                 borderRadius: BorderRadius.horizontal(
                                     left: Radius.circular(12)),
-                                child: Image.network(
-                                  recipe.imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: 140,
-                                  height: double.infinity,
-                                ),
+                                child: _buildRecipeImage(recipe),
                               ),
                               Expanded(
                                 child: Padding(
@@ -324,3 +336,55 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
     );
   }
 }
+
+ Widget _buildRecipeImage(Recipe recipe) {
+
+    if (recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty) {
+
+      return Image.network(
+
+        recipe.imageUrl!,
+
+        width: 120,
+
+        height: 200,
+
+        fit: BoxFit.cover,
+
+      );
+
+    } else if (recipe.imageBlob != null) {
+
+      return Image.memory(
+
+        recipe.imageBlob!,
+
+        width: 120,
+
+        height: 200,
+
+        fit: BoxFit.cover,
+
+      );
+
+    } else {
+
+      return Container(
+
+        width: 120,
+
+        height: 200,
+
+        color: Colors.grey,
+
+        child: Center(
+
+          child: Text('No Image Available'),
+
+        ),
+
+      );
+
+    }
+
+  }

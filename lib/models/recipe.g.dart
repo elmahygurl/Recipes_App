@@ -22,15 +22,15 @@ class RecipeAdapter extends TypeAdapter<Recipe> {
       description: fields[2] as String,
       ingredients: (fields[3] as List).cast<String>(),
       steps: (fields[4] as List).cast<String>(),
-      imageUrl: fields[5] as String,
-      author: fields[6] as String,
-    );
+      imageUrl: fields[5] as String?,
+      author: fields[7] as String,
+    )..imageBlob = fields[6] as Uint8List?;
   }
 
   @override
   void write(BinaryWriter writer, Recipe obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,6 +44,8 @@ class RecipeAdapter extends TypeAdapter<Recipe> {
       ..writeByte(5)
       ..write(obj.imageUrl)
       ..writeByte(6)
+      ..write(obj.imageBlob)
+      ..writeByte(7)
       ..write(obj.author);
   }
 
