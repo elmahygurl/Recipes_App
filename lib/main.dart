@@ -6,11 +6,16 @@ import 'package:recipes_app/screens/recipe_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/screens/signin.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:recipes_app/models/recipe.dart'; 
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await Hive.initFlutter();
+  Hive.registerAdapter(RecipeAdapter()); //registered the adapter
+  await Hive.openBox<Recipe>('user_recipes'); //opened a box to store recipes
   runApp(MyApp());
 }
 
@@ -19,12 +24,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // StreamProvider to listen for authentication state changes and provide current User object to widget tree.
     return StreamProvider<User?>(
-      create: (context) => Authenticationservice(FirebaseAuth.instance).authStateChanges,
+      create: (context) =>
+          Authenticationservice(FirebaseAuth.instance).authStateChanges,
       initialData: null,
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Recipes App',
         theme: ThemeData(
+          scaffoldBackgroundColor: Color.fromRGBO(80, 178, 243, 0.973),
           primaryColor: Color.fromARGB(201, 145, 91, 105),
           colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Color.fromARGB(201, 247, 150, 174),

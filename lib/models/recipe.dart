@@ -1,12 +1,29 @@
-class Recipe {
-  final String id;
-  final String title;
-  final String description;
-  final List<String> ingredients;
-  final List<String> steps;
-  final String imageUrl;
-  final String author; 
+import 'package:hive/hive.dart';
 
+part 'recipe.g.dart';
+
+@HiveType(typeId: 0)
+class Recipe extends HiveObject {
+  @HiveField(0)
+  final String id;
+
+  @HiveField(1)
+  final String title;
+
+  @HiveField(2)
+  final String description;
+
+  @HiveField(3)
+  final List<String> ingredients;
+
+  @HiveField(4)
+  final List<String> steps;
+
+  @HiveField(5)
+  final String imageUrl;
+
+  @HiveField(6)
+  final String author;
 
   Recipe({
     required this.id,
@@ -15,7 +32,7 @@ class Recipe {
     required this.ingredients,
     required this.steps,
     required this.imageUrl,
-    required this.author, 
-
+    required this.author,
   });
 }
+

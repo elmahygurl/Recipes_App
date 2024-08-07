@@ -289,9 +289,10 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   },
                 ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Color.fromARGB(150, 223, 20, 114),
         child: Icon(Icons.add),
         onPressed: () {
-          showModalBottomSheet(
+          showModalBottomSheet(backgroundColor: Color.fromARGB(251, 190, 119, 154),
             context: context,
             builder: (context) => Wrap(
               children: [

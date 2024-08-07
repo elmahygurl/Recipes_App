@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
 import 'package:recipes_app/Image/image_input_field.dart';
@@ -55,20 +56,33 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
     if (user != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      String? author = user.email;
-      DatabaseReference recipesRef =
-          FirebaseDatabase.instance.ref().child('recipes');
+      final newRecipe = Recipe(
+        id: user.uid,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        ingredients: _NewIngredients,
+        steps: _NewSteps,
+        imageUrl: _imageUrlController.text,
+        author: user.email!,
+      );
 
-      Map<String, dynamic> recipeData = {
-        'title': _titleController.text,
-        'description': _descriptionController.text,
-        'ingredients': _NewIngredients,
-        'steps': _NewSteps,
-        'imageUrl': _imageUrlController.text,
-        'author': author,
-      };
+      print(newRecipe);
+      final box = Hive.box<Recipe>('user_recipes');
+      await box.add(newRecipe);
 
-      await recipesRef.push().set(recipeData);
+      //  for saving in realtime database on Firebase
+      // DatabaseReference recipesRef =
+      //     FirebaseDatabase.instance.ref().child('recipes');
+      // await recipesRef.push().set({
+      //   'id': user.uid,
+      //   'title': _titleController.text,
+      //   'description': _descriptionController.text,
+      //   'ingredients': _NewIngredients,
+      //   'steps': _NewSteps,
+      //   'imageUrl': _imageUrlController.text,
+      //   'author': user.email,
+      // });
+
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
           content: Text('Thanks for sharing your masterpiece')));
