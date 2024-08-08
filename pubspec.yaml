@@ -39,3 +39,7 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
+  assets:
+    - Assets/back.PNG
+    - Assets/back2.PNG
+    - Assets/back0.PNG

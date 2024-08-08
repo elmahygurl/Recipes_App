@@ -35,90 +35,100 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipe.title),
-        backgroundColor: const Color.fromARGB(255, 233, 124, 91),
+        backgroundColor: const Color.fromARGB(255, 255, 177, 177),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: ListView(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15.0),
-                child: _buildImage(),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('Assets/back2.PNG'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: ListView(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: _buildImage(),
+                ),
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              'By ${widget.recipe.author}',
-              style: TextStyle(
-                fontStyle: FontStyle.italic,
-                fontSize: 20,
+              SizedBox(height: 10),
+              Text(
+                'By ${widget.recipe.author}',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontSize: 20,
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Ingredients',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepOrange,
+              SizedBox(height: 8),
+              Text(
+                'Ingredients',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 26, 23, 22),
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Wrap(
-              spacing: 8.0,
-              runSpacing: 8.0,
-              children: widget.recipe.ingredients.map((ingredient) {
-                return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: Colors.white,
-                  ),
-                  child: Text(
-                    ingredient,
-                    style: TextStyle(fontSize: 18),
+              SizedBox(height: 8),
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 8.0,
+                children: widget.recipe.ingredients.map((ingredient) {
+                  return Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8.0),
+                      color: const Color.fromARGB(255, 255, 177, 177),
+                    ),
+                    child: Text(
+                      ingredient,
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'Steps',
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: const Color.fromARGB(255, 15, 15, 15),
+                ),
+              ),
+              SizedBox(height: 8),
+              ...widget.recipe.steps.asMap().entries.map((entry) {
+                int idx = entry.key;
+                String step = entry.value;
+        
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  child: ListTile(
+                    tileColor: const Color.fromARGB(255, 255, 177, 177),
+                    leading: Icon(
+                      _stepsCompleted[idx]
+                          ? Icons.check_box
+                          : Icons.check_box_outline_blank,
+                      color: const Color.fromARGB(255, 14, 11, 11),
+                    ),
+                    title: Text(
+                      '${idx + 1}. $step',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    onTap: () {
+                      _toggleStepCompletion(idx);
+                    },
+                    
                   ),
                 );
               }).toList(),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Steps',
-              style: TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.bold,
-                color: Colors.deepOrange,
-              ),
-            ),
-            SizedBox(height: 8),
-            ...widget.recipe.steps.asMap().entries.map((entry) {
-              int idx = entry.key;
-              String step = entry.value;
-
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 4),
-                child: ListTile(
-                  leading: Icon(
-                    _stepsCompleted[idx]
-                        ? Icons.check_box
-                        : Icons.check_box_outline_blank,
-                    color: Colors.deepOrange,
-                  ),
-                  title: Text(
-                    '${idx + 1}. $step',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  onTap: () {
-                    _toggleStepCompletion(idx);
-                  },
-                ),
-              );
-            }).toList(),
-          ],
+            ],
+          ),
         ),
       ),
     );

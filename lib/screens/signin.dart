@@ -23,8 +23,6 @@ class _SignInScreenState extends State<SignInScreen> {
         password: _passwordController.text,
       );
 
-      //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-
       if (message == "Signed in successfully") {
         //clear after sign-in
         // _emailController.clear();
@@ -36,12 +34,11 @@ class _SignInScreenState extends State<SignInScreen> {
         print('logged in successfully');
       } else {
         print('didnt log in');
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Incorrect email or password')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Incorrect email or password')));
       }
     }
   }
-
 
   @override
   void dispose() {
@@ -53,60 +50,111 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text('Sign In')),
-        backgroundColor: const Color.fromARGB(255, 233, 124, 91),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email Address'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter an email address';
-                  } else if (!RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
-                      .hasMatch(value)) {
-                    return 'Please enter a valid email address';
-                  }
-                  return null;
-                },
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('Assets/back.PNG'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(200),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: _emailController,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    decoration: InputDecoration(
+                      labelText: 'Email Address',
+                      labelStyle: TextStyle(color: Colors.white, fontSize: 20),
+                      iconColor: Color.fromARGB(248, 223, 238, 235),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.white70, width: 1.5),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.white70, width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter an email address';
+                      } else if (!RegExp(
+                              r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$')
+                          .hasMatch(value)) {
+                        return 'Please enter a valid email address';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+                  TextFormField(
+                    controller: _passwordController,
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    decoration: InputDecoration(
+                      fillColor: Color.fromARGB(100, 255, 255, 255),
+                      labelText: 'Password',
+                      labelStyle: TextStyle(color: Colors.white, fontSize: 20),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.white70, width: 1.5),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: Colors.white70, width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    obscureText: true,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: _signIn,
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      elevation: 8,
+                      side: BorderSide(
+                          color: Color.fromARGB(255, 16, 17, 17), width: 2.0),
+                    ),
+                    child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                          fontSize: 22,
+                          color: Color.fromARGB(239, 157, 237, 243)),
+                    ),
+                  ),
+                ],
               ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _signIn,
-                child: Text(
-                  'Sign In',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-
-// Future<void> main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   await Firebase.initializeApp();
-//   runApp(MaterialApp(
-//     home: SignInScreen(),
-//   ));
-// }

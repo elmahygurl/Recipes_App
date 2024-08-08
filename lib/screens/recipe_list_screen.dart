@@ -209,82 +209,90 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
           ? Center(child: CircularProgressIndicator())
           : recipes.isEmpty
               ? Center(child: Text('No recipes available.'))
-              : ListView.builder(
-                  itemCount: recipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe = recipes[index];
-                    return Center(
-                        child: Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      height: 200,
-                      margin:
-                          EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  RecipeDetailScreen(recipe: recipe),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.horizontal(
-                                    left: Radius.circular(12)),
-                                child: _buildRecipeImage(recipe),
+              : Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('Assets/back0.PNG'),
+            fit: BoxFit.cover,
+          ),
+        ),
+                child: ListView.builder(
+                    itemCount: recipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = recipes[index];
+                      return Center(
+                          child: Container(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: 200,
+                        margin:
+                            EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    RecipeDetailScreen(recipe: recipe),
                               ),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
+                            );
+                          },
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.horizontal(
+                                      left: Radius.circular(12)),
+                                  child: _buildRecipeImage(recipe),
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          recipe.title,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          recipe.description,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        SizedBox(height: 8),
                                       Text(
-                                        recipe.title,
+                                        'By ${recipe.author}',
                                         style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20,
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 14,
                                         ),
                                       ),
-                                      SizedBox(height: 4),
-                                      Text(
-                                        recipe.description,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8),
-                                    Text(
-                                      'By ${recipe.author}',
-                                      style: TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 14,
-                                      ),
+                                      ],
                                     ),
-                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ));
-                  },
-                ),
+                      ));
+                    },
+                  ),
+              ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(150, 223, 20, 114),
         child: Icon(Icons.add),

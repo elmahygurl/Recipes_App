@@ -23,20 +23,19 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
     super.initState();
     fetchRecipes();
   }
-   
-
 
   Future<void> fetchRecipes() async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-      if(user != null){
-      final box = Hive.box<Recipe>('user_recipes');
-      List<Recipe> fetchedRecipes = box.values.where((recipe) => recipe.id == user.uid).toList();
+      if (user != null) {
+        final box = Hive.box<Recipe>('user_recipes');
+        List<Recipe> fetchedRecipes =
+            box.values.where((recipe) => recipe.id == user.uid).toList();
 
-      setState(() {
-        recipes = fetchedRecipes;
-        isLoading = false;
-      });
+        setState(() {
+          recipes = fetchedRecipes;
+          isLoading = false;
+        });
       }
     } catch (error) {
       setState(() {
@@ -78,86 +77,92 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
           ? Center(child: CircularProgressIndicator())
           : recipes.isEmpty
               ? Center(child: Text('No recipes available.'))
-              : ListView.builder(
-                  itemCount: recipes.length,
-                  itemBuilder: (context, index) {
-                    final recipe = recipes[index];
-                    final imageWidget =
-                        recipe.imageType == '0' && recipe.image.isNotEmpty
-                            ? Image.memory(
-                                _decodeImage(recipe.image) ?? Uint8List(0),
-                                width: MediaQuery.of(context).size.width *
-                                    0.2, 
-                                height: MediaQuery.of(context).size.width *
-                                    0.6, 
-                                fit: BoxFit.cover,
-                              )
-                            : Placeholder();
+              : Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('Assets/back0.PNG'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: ListView.builder(
+                    itemCount: recipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = recipes[index];
+                      final imageWidget = recipe.imageType == '0' &&
+                              recipe.image.isNotEmpty
+                          ? Image.memory(
+                              _decodeImage(recipe.image) ?? Uint8List(0),
+                              width: MediaQuery.of(context).size.width * 0.2,
+                              height: MediaQuery.of(context).size.width * 0.6,
+                              fit: BoxFit.cover,
+                            )
+                          : Placeholder();
 
-                    return Center(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 200,
-                        margin: EdgeInsets.symmetric(
-                            vertical: 6.0, horizontal: 16.0),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    RecipeDetailScreen(recipe: recipe),
-                              ),
-                            );
-                          },
-                          child: Card(
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.horizontal(
-                                      left: Radius.circular(12)),
-                                  child: imageWidget,
+                      return Center(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          height: 200,
+                          margin: EdgeInsets.symmetric(
+                              vertical: 6.0, horizontal: 16.0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      RecipeDetailScreen(recipe: recipe),
                                 ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          recipe.title,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                              );
+                            },
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.horizontal(
+                                        left: Radius.circular(12)),
+                                    child: imageWidget,
+                                  ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            recipe.title,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          recipe.description,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            fontSize: 16,
+                                          SizedBox(height: 4),
+                                          Text(
+                                            recipe.description,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              fontSize: 16,
+                                            ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
     );
   }
