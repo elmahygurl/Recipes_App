@@ -9,7 +9,6 @@ import 'package:recipes_app/screens/myrecipes.dart';
 import 'package:recipes_app/screens/recipe_detail_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:recipes_app/screens/add_recipe_screen.dart';
-import 'package:recipes_app/screens/signin.dart';
 import 'package:provider/provider.dart';
 import 'package:recipes_app/Encrypttt/aes_helper.dart';
 
@@ -46,13 +45,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         for (var item in dataList) {
           if (item != null && item is Map<dynamic, dynamic>) {
             Map<dynamic, dynamic> recipeData = item;
-            Uint8List? imageBlob;
-
-            if (recipeData['imageBlob'] != null) {
-
-              imageBlob = base64Decode(recipeData['imageBlob']);
-
-            }
 
             fetchedRecipes.add(Recipe(
               id: DateTime.now()
@@ -61,8 +53,8 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               description: recipeData['description'],
               ingredients: List<String>.from(recipeData['ingredients']),
               steps: List<String>.from(recipeData['steps']),
-              imageUrl: recipeData['imageUrl'],
-              imageBlob: imageBlob,
+              image: recipeData['imageUrl'],
+              imageType: '1',   //fetched from firebase
               author: recipeData['author'],
             ));
           }
@@ -96,6 +88,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       print("Error fetching data: $error");
     }
   }
+  
 
   void _signOut() async {
     String message = await _authService.signOut();
@@ -124,22 +117,14 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   // helpwer function to convert JSON string to Recipe object
   Recipe deserializeRecipe(String jsonString) {
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-    Uint8List? imageBlob;
-
-    if (jsonMap['imageBlob'] != null) {
-
-      imageBlob = base64Decode(jsonMap['imageBlob']);
-
-    }
-
     return Recipe(
       id: DateTime.now().toIso8601String(),
       title: jsonMap['title'],
       description: jsonMap['description'],
       ingredients: List<String>.from(jsonMap['ingredients']),
       steps: List<String>.from(jsonMap['steps']),
-      imageUrl: jsonMap['imageUrl'],
-      imageBlob: imageBlob,
+      image: jsonMap['imageUrl'],
+      imageType: '1',  
       author: jsonMap['author'],
     );
   }
@@ -181,7 +166,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RecipeDetailScreen(recipe: recipe),
+                      builder: (context) => RecipeDetailScreen(recipe: recipe),  //hena hatro7 bas no imagetype saved fel api
                     ),
                   );
                 } catch (e) {
@@ -337,54 +322,47 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   }
 }
 
- Widget _buildRecipeImage(Recipe recipe) {
-
-    if (recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty) {
-
-      return Image.network(
-
-        recipe.imageUrl!,
-
-        width: 120,
-
-        height: 200,
-
-        fit: BoxFit.cover,
-
-      );
-
-    } else if (recipe.imageBlob != null) {
-
+Widget _buildRecipeImage(Recipe recipe) {
+  // If imageType is 0, use the base64-encoded string
+  if (recipe.imageType == '0' && recipe.image.isNotEmpty) {
+    try {
+      Uint8List imageBytes = base64Decode(recipe.image);
       return Image.memory(
-
-        recipe.imageBlob!,
-
+        imageBytes,
         width: 120,
-
         height: 200,
-
         fit: BoxFit.cover,
-
       );
-
-    } else {
-
+    } catch (e) {
+      // Handle decoding errors
       return Container(
-
         width: 120,
-
         height: 200,
-
         color: Colors.grey,
-
         child: Center(
-
-          child: Text('No Image Available'),
-
+          child: Text('Error decoding image'),
         ),
-
       );
-
     }
-
+  } 
+  // If imageType is 1, use the URL string - i didnt put recipe.imageType == 1 &&  cuz in APi its not set
+  else if (recipe.image.isNotEmpty) {
+    return Image.network(
+      recipe.image,
+      width: 120,
+      height: 200,
+      fit: BoxFit.cover,
+    );
+  } 
+  // No image available
+  else {
+    return Container(
+      width: 120,
+      height: 200,
+      color: Colors.grey,
+      child: Center(
+        child: Text('No Image Available'),
+      ),
+    );
   }
+}

@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
@@ -21,26 +20,26 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _imageUrlController = TextEditingController();
+  String _imageBase64 = ''; // Changed to store base64 string
 
-  List<String> _NewIngredients = [];
-  List<String> _NewSteps = [];
-  File? _imageFile;
+  List<String> _newIngredients = [];
+  List<String> _newSteps = [];
 
   void _addIngredient() {
     setState(() {
-      _NewIngredients.add('');
+      _newIngredients.add('');
     });
   }
 
   void _removeIngredient(int index) {
     setState(() {
-      _NewIngredients.removeAt(index);
+      _newIngredients.removeAt(index);
     });
   }
 
   void _addStep() {
     setState(() {
-      _NewSteps.add('');
+      _newSteps.add('');
     });
   }
 
@@ -50,74 +49,42 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   void _removeStep(int index) {
     setState(() {
-      _NewSteps.removeAt(index);
+      _newSteps.removeAt(index);
     });
   }
 
-  // Future<void> _saveRecipe() async {
-  //   final user = FirebaseAuth.instance.currentUser;
-  //   if (user != null && _formKey.currentState!.validate()) {
-  //     _formKey.currentState!.save();
-
-  //     final newRecipe = Recipe(
-  //       id: user.uid,
-  //       title: _titleController.text,
-  //       description: _descriptionController.text,
-  //       ingredients: _NewIngredients,
-  //       steps: _NewSteps,
-  //       imageUrl: _imageUrlController.text,
-  //       author: user.email!,
-  //     );
-
-  //     print(newRecipe);
-  //     final box = Hive.box<Recipe>('user_recipes');
-  //     await box.add(newRecipe);
-
-  //     //  for saving in realtime database on Firebase
-  //     // DatabaseReference recipesRef =
-  //     //     FirebaseDatabase.instance.ref().child('recipes');
-  //     // await recipesRef.push().set({
-  //     //   'id': user.uid,
-  //     //   'title': _titleController.text,
-  //     //   'description': _descriptionController.text,
-  //     //   'ingredients': _NewIngredients,
-  //     //   'steps': _NewSteps,
-  //     //   'imageUrl': _imageUrlController.text,
-  //     //   'author': user.email,
-  //     // });
-
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //         backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
-  //         content: Text('Thanks for sharing your masterpiece')));
-
-  //     Navigator.pop(context);
-  //   }
-  // }
-    Future<void> _saveRecipe() async {
+  Future<void> _saveRecipe() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && _formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      String? author = user.email;
-
-      Uint8List? imageBytes;
-      if (_imageFile != null) {
-        imageBytes = await _imageFile!.readAsBytes();
-      }
-
-      Recipe newRecipe = Recipe(
+      final newRecipe = Recipe(
         id: user.uid,
         title: _titleController.text,
         description: _descriptionController.text,
-        ingredients: _NewIngredients,
-        steps: _NewSteps,
-        imageUrl: _imageFile == null ? _imageUrlController.text : null,
-        imageBlob: imageBytes,
-        author: author!,
+        ingredients: _newIngredients,
+        steps: _newSteps,
+        image: _imageBase64,
+        imageType: '0', //0 for uploading or pic taken
+        author: user.email!,
       );
 
+      print(newRecipe);
       final box = Hive.box<Recipe>('user_recipes');
       await box.add(newRecipe);
+
+      //  for saving in realtime database on Firebase
+      // DatabaseReference recipesRef =
+      //     FirebaseDatabase.instance.ref().child('recipes');
+      // await recipesRef.push().set({
+      //   'id': user.uid,
+      //   'title': _titleController.text,
+      //   'description': _descriptionController.text,
+      //   'ingredients': _NewIngredients,
+      //   'steps': _NewSteps,
+      //   'imageUrl': _imageUrlController.text,
+      //   'author': user.email,
+      // });
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Color.fromRGBO(238, 37, 238, 0.795),
@@ -126,7 +93,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
       Navigator.pop(context);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +132,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   return null;
                 },
               ),
-              ImageInputField(controller: _imageUrlController),
+              ImageInputField(
+                onImageChanged: (base64Image) {
+                  setState(() {
+                    _imageBase64 = base64Image;
+                  });
+                },
+              ),
               SizedBox(height: 20),
               Text(
                 'Ingredients',
@@ -175,7 +147,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              ..._NewIngredients.asMap().entries.map((entry) {
+              ..._newIngredients.asMap().entries.map((entry) {
                 int index = entry.key;
                 String ingredient = entry.value;
                 return Row(
@@ -188,7 +160,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                         ),
                         onChanged: (value) {
                           setState(() {
-                            _NewIngredients[index] = value;
+                            _newIngredients[index] = value;
                           });
                         },
                       ),
@@ -212,7 +184,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              ..._NewSteps.asMap().entries.map((entry) {
+              ..._newSteps.asMap().entries.map((entry) {
                 int index = entry.key;
                 String step = entry.value;
                 return Row(
@@ -225,7 +197,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
                         ),
                         onChanged: (value) {
                           setState(() {
-                            _NewSteps[index] = value;
+                            _newSteps[index] = value;
                           });
                         },
                       ),

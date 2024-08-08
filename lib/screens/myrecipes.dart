@@ -1,3 +1,5 @@
+import 'dart:convert'; // For base64 decoding
+import 'dart:typed_data'; // For Uint8List
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:recipes_app/models/recipe.dart';
@@ -21,7 +23,6 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
   Future<void> fetchRecipes() async {
     try {
       final box = Hive.box<Recipe>('user_recipes');
-
       List<Recipe> fetchedRecipes = box.values.toList();
 
       setState(() {
@@ -33,6 +34,16 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
         isLoading = false;
       });
       print("Error fetching data: $error");
+    }
+  }
+
+  // helper method to decode base64 image string to Uint8List
+  Uint8List? _decodeImage(String imageString) {
+    try {
+      return base64Decode(imageString);
+    } catch (e) {
+      print('Error decoding image: $e');
+      return null;
     }
   }
 
@@ -55,29 +66,81 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
               : ListView.builder(
                   itemCount: recipes.length,
                   itemBuilder: (context, index) {
-                  final recipe = recipes[index];
-                  return ListTile(
-                    title: Text(recipe.title),
-                    subtitle: Text(recipe.description),
-                    leading: recipe.imageBlob != null
-                        ? Image.memory(recipe.imageBlob!)
-                        : recipe.imageUrl != null && recipe.imageUrl!.isNotEmpty
-                            ? Image.network(recipe.imageUrl!)
-                            : null,
+                    final recipe = recipes[index];
+                    final imageWidget =
+                        recipe.imageType == '0' && recipe.image.isNotEmpty
+                            ? Image.memory(
+                                _decodeImage(recipe.image) ?? Uint8List(0),
+                                width: MediaQuery.of(context).size.width *
+                                    0.2, 
+                                height: MediaQuery.of(context).size.width *
+                                    0.4, 
+                                fit: BoxFit.cover,
+                              )
+                            : Placeholder();
 
-                  // itemBuilder: (context, index) {
-                  //   final recipe = recipes[index];
-                  //   return ListTile(
-                  //     title: Text(recipe.title),
-                  //     subtitle: Text(recipe.description),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => RecipeDetailScreen(recipe: recipe),
+                    return Center(
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        height: 200,
+                        margin: EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 16.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    RecipeDetailScreen(recipe: recipe),
+                              ),
+                            );
+                          },
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.horizontal(
+                                      left: Radius.circular(12)),
+                                  child: imageWidget,
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          recipe.title,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          recipe.description,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.normal,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                      },
+                        ),
+                      ),
                     );
                   },
                 ),

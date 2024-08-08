@@ -22,9 +22,10 @@ class RecipeAdapter extends TypeAdapter<Recipe> {
       description: fields[2] as String,
       ingredients: (fields[3] as List).cast<String>(),
       steps: (fields[4] as List).cast<String>(),
-      imageUrl: fields[5] as String?,
+      image: fields[5] as String,
+      imageType: fields[6] as String,
       author: fields[7] as String,
-    )..imageBlob = fields[6] as Uint8List?;
+    );
   }
 
   @override
@@ -42,9 +43,9 @@ class RecipeAdapter extends TypeAdapter<Recipe> {
       ..writeByte(4)
       ..write(obj.steps)
       ..writeByte(5)
-      ..write(obj.imageUrl)
+      ..write(obj.image)
       ..writeByte(6)
-      ..write(obj.imageBlob)
+      ..write(obj.imageType)
       ..writeByte(7)
       ..write(obj.author);
   }

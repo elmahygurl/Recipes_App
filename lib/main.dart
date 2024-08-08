@@ -7,15 +7,23 @@ import 'package:provider/provider.dart';
 import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/screens/signin.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:recipes_app/models/recipe.dart'; 
+import 'package:recipes_app/models/recipe.dart';
 
-
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter();
   Hive.registerAdapter(RecipeAdapter()); //registered the adapter
-  await Hive.openBox<Recipe>('user_recipes'); //opened a box to store recipes
+// //delete and recreate the box to ensure fresh start
+//   if (Hive.isBoxOpen('user_recipes')) {
+//     final box = Hive.box<Recipe>('user_recipes');
+//     await box.clear(); // clears all data
+//     await box.close(); // close the box
+//   }
+//   await Hive.deleteBoxFromDisk('user_recipes'); //delete box from disk
+  await Hive.openBox<Recipe>('user_recipes'); // Open a new box
+
+  // await Hive.openBox<Recipe>('user_recipes'); //opened a box to store recipes
   runApp(MyApp());
 }
 

@@ -21,10 +21,10 @@ class Recipe extends HiveObject {
   final List<String> steps;
 
   @HiveField(5)
-  String? imageUrl;
+  final String image;
 
   @HiveField(6)
-  Uint8List? imageBlob;
+  final String imageType;  //0 for upload or user entry and 1 for database or API
   
   @HiveField(7)
   final String author;
@@ -35,8 +35,8 @@ class Recipe extends HiveObject {
     required this.description,
     required this.ingredients,
     required this.steps,
-    this.imageUrl,
-    this.imageBlob,
+    required this.image,
+    required this.imageType,
     required this.author,
   });
 }

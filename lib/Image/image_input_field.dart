@@ -1,13 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-
 
 class ImageInputField extends StatefulWidget {
-  final TextEditingController controller;
+  final ValueChanged<String> onImageChanged;
 
-  ImageInputField({required this.controller});
+  ImageInputField({required this.onImageChanged});
 
   @override
   _ImageInputFieldState createState() => _ImageInputFieldState();
@@ -18,23 +18,30 @@ class _ImageInputFieldState extends State<ImageInputField> {
   File? _imageFile;
 
   Future<void> _pickImageFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
+      final base64Image = await _convertFileToBase64(pickedFile);
       setState(() {
         _imageFile = File(pickedFile.path);
-        widget.controller.text = pickedFile.path;
+        widget.onImageChanged(base64Image);
       });
     }
   }
 
   Future<void> _takePicture() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
+      final base64Image = await _convertFileToBase64(pickedFile);
       setState(() {
         _imageFile = File(pickedFile.path);
-        widget.controller.text = pickedFile.path;
+        widget.onImageChanged(base64Image);
       });
     }
+  }
+
+  Future<String> _convertFileToBase64(XFile file) async {
+    final bytes = await file.readAsBytes();
+    return base64Encode(bytes);
   }
 
   @override
@@ -42,16 +49,6 @@ class _ImageInputFieldState extends State<ImageInputField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextFormField(
-          controller: widget.controller,
-          decoration: InputDecoration(labelText: 'Image URL'),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter an image URL';
-            }
-            return null;
-          },
-        ),
         SizedBox(height: 10),
         Row(
           children: [
