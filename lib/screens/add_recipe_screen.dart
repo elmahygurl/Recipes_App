@@ -22,9 +22,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   List<String> _newIngredients = [];
   List<String> _newSteps = [];
 
-  void _signOut() async {
-    String message = await _authService.signOut();
-  }
 
   Future<void> _saveRecipe() async {
     final user = FirebaseAuth.instance.currentUser;
@@ -58,13 +55,13 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add a New Recipe'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: _signOut,
-          ),
-        ],
+        title: Center(child: Text('Add a New Recipe')),
+        // actions: <Widget>[
+        //   IconButton(
+        //     icon: Icon(Icons.logout),
+        //     onPressed: _signOut,
+        //   ),
+        // ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

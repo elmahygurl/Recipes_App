@@ -3,6 +3,7 @@ import 'dart:typed_data'; // For Uint8List
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:recipes_app/Auth/authenticationService.dart';
 import 'package:recipes_app/models/recipe.dart';
 import 'package:recipes_app/screens/recipe_detail_screen.dart';
 
@@ -14,12 +15,16 @@ class MyRecipesScreen extends StatefulWidget {
 class _MyRecipesScreenState extends State<MyRecipesScreen> {
   List<Recipe> recipes = [];
   bool isLoading = true;
+  final Authenticationservice _authService =
+      Authenticationservice(FirebaseAuth.instance);
 
   @override
   void initState() {
     super.initState();
     fetchRecipes();
   }
+   
+
 
   Future<void> fetchRecipes() async {
     try {
@@ -62,6 +67,12 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
             Navigator.pop(context);
           },
         ),
+        actions: <Widget>[
+          // IconButton(
+          //   icon: Icon(Icons.logout),
+          //   onPressed: _signOut,
+          // ),
+        ],
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
