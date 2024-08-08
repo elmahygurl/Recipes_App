@@ -1,5 +1,6 @@
 import 'dart:convert'; // For base64 decoding
 import 'dart:typed_data'; // For Uint8List
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:recipes_app/models/recipe.dart';
@@ -22,13 +23,16 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
 
   Future<void> fetchRecipes() async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      if(user != null){
       final box = Hive.box<Recipe>('user_recipes');
-      List<Recipe> fetchedRecipes = box.values.toList();
+      List<Recipe> fetchedRecipes = box.values.where((recipe) => recipe.id == user.uid).toList();
 
       setState(() {
         recipes = fetchedRecipes;
         isLoading = false;
       });
+      }
     } catch (error) {
       setState(() {
         isLoading = false;
@@ -74,7 +78,7 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
                                 width: MediaQuery.of(context).size.width *
                                     0.2, 
                                 height: MediaQuery.of(context).size.width *
-                                    0.4, 
+                                    0.6, 
                                 fit: BoxFit.cover,
                               )
                             : Placeholder();
