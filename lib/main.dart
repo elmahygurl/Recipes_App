@@ -9,7 +9,7 @@ import 'package:recipes_app/screens/signin.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:recipes_app/models/recipe.dart';
 
-Future<void> main() async {
+Future<void> main() async { 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await Hive.initFlutter();
