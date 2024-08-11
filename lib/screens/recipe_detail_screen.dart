@@ -133,46 +133,90 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
       ),
     );
   }
-@override
-  Widget _buildImage() {
-    if (widget.recipe.imageType == '0' && widget.recipe.image.isNotEmpty) {
-      try {
-        Uint8List imageBytes = base64Decode(widget.recipe.image);
 
-        return PhotoView(
-          imageProvider: MemoryImage(imageBytes),
+  Widget _buildImage() {
+  if (widget.recipe.imageType == '0' && widget.recipe.image.isNotEmpty) {
+    try {
+      Uint8List imageBytes = base64Decode(widget.recipe.image);
+    
+      return Stack(
+        children: [
+          PhotoView(
+            imageProvider: MemoryImage(imageBytes),
+            minScale: PhotoViewComputedScale.contained,
+            maxScale: PhotoViewComputedScale.contained * 2,
+            initialScale: PhotoViewComputedScale.contained,
+            backgroundDecoration: BoxDecoration(
+              color: Colors.transparent,
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            right: 10,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'Pinch to zoom',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    } catch (e) {
+      return Container(
+        color: Colors.grey,
+        child: Center(
+          child: Text('Error decoding image'),
+        ),
+      );
+    }
+  } else if (widget.recipe.image.isNotEmpty) {
+    return Stack(
+      children: [
+        PhotoView(
+          imageProvider: NetworkImage(widget.recipe.image),
           minScale: PhotoViewComputedScale.contained,
           maxScale: PhotoViewComputedScale.contained * 2,
           initialScale: PhotoViewComputedScale.contained,
           backgroundDecoration: BoxDecoration(
             color: Colors.transparent,
           ),
-        );
-      } catch (e) {
-        return Container(
-          color: Colors.grey,
-          child: Center(
-            child: Text('Error decoding image'),
+        ),
+        Positioned(
+          bottom: 10,
+          right: 10,
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.7),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Text(
+              'Pinch to zoom',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+              ),
+            ),
           ),
-        );
-      }
-    } else if ( widget.recipe.image.isNotEmpty) {
-      return PhotoView(
-        imageProvider: NetworkImage(widget.recipe.image),
-        minScale: PhotoViewComputedScale.contained,
-        maxScale: PhotoViewComputedScale.contained * 2,
-        initialScale: PhotoViewComputedScale.contained,
-        backgroundDecoration: BoxDecoration(
-          color: Colors.transparent,
         ),
-      );
-    } else {
-      return Container(
-        color: Colors.grey,
-        child: Center(
-          child: Text('No Image Available'),
-        ),
-      );
-    }
+      ],
+    );
+  } else {
+    return Container(
+      color: Colors.grey,
+      child: Center(
+        child: Text('No Image Available'),
+      ),
+    );
   }
+}  
 }
