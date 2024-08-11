@@ -22,7 +22,6 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   List<String> _newIngredients = [];
   List<String> _newSteps = [];
 
-
   Future<void> _saveRecipe() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && _formKey.currentState!.validate()) {
@@ -53,6 +52,7 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double pad = MediaQuery.of(context).size.width * 0.1;
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text('Add a New Recipe')),
@@ -70,147 +70,168 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: ListView(
-              children: [
-                TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(labelText: 'Title'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a title';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(labelText: 'Description'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a description';
-                    }
-                    return null;
-                  },
-                ),
-                ImageInputField(
-                  onImageChanged: (base64Image) {
-                    setState(() {
-                      _imageBase64 = base64Image;
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Ingredients',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Column(
-                      children: [
-                        ..._newIngredients.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          String ingredient = entry.value;
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  initialValue: ingredient,
-                                  decoration: InputDecoration(
-                                    hintText: 'Enter ingredient',
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IntrinsicHeight(
+              child: Card(
+                surfaceTintColor: Color.fromARGB(172, 70, 216, 65),
+                elevation: 5,
+                child:Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min, 
+                        children: [
+                          TextFormField(
+                            controller: _titleController,
+                            decoration: InputDecoration(labelText: 'Title'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a title';
+                              }
+                              return null;
+                            },
+                          ),
+                          TextFormField(
+                            controller: _descriptionController,
+                            decoration:
+                                InputDecoration(labelText: 'Description'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a description';
+                              }
+                              return null;
+                            },
+                          ),
+                          ImageInputField(
+                            onImageChanged: (base64Image) {
+                              setState(() {
+                                _imageBase64 = base64Image;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Ingredients',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          StatefulBuilder(
+                            builder:
+                                (BuildContext context, StateSetter setState) {
+                              return Column(
+                                children: [
+                                  ..._newIngredients
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                    int index = entry.key;
+                                    String ingredient = entry.value;
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            initialValue: ingredient,
+                                            decoration: InputDecoration(
+                                              hintText: 'Enter ingredient',
+                                            ),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _newIngredients[index] = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon:
+                                              Icon(Icons.remove_circle_outline),
+                                          onPressed: () => setState(() {
+                                            _newIngredients.removeAt(index);
+                                          }),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                  IconButton(
+                                    icon: Icon(Icons.add_circle_outline),
+                                    onPressed: () {
+                                      setState(() {
+                                        _newIngredients.add('');
+                                      });
+                                    },
                                   ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _newIngredients[index] = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.remove_circle_outline),
-                                onPressed: () => setState(() {
-                                  _newIngredients.removeAt(index);
-                                }),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                        IconButton(
-                          icon: Icon(Icons.add_circle_outline),
-                          onPressed: () {
-                            setState(() {
-                              _newIngredients.add('');
-                            });
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Steps',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return Column(
-                      children: [
-                        ..._newSteps.asMap().entries.map((entry) {
-                          int index = entry.key;
-                          String step = entry.value;
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  initialValue: step,
-                                  decoration: InputDecoration(
-                                    hintText: 'Enter step',
+                                ],
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Steps',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          StatefulBuilder(
+                            builder:
+                                (BuildContext context, StateSetter setState) {
+                              return Column(
+                                children: [
+                                  ..._newSteps.asMap().entries.map((entry) {
+                                    int index = entry.key;
+                                    String step = entry.value;
+                                    return Row(
+                                      children: [
+                                        Expanded(
+                                          child: TextFormField(
+                                            initialValue: step,
+                                            decoration: InputDecoration(
+                                              hintText: 'Enter step',
+                                            ),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _newSteps[index] = value;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon:
+                                              Icon(Icons.remove_circle_outline),
+                                          onPressed: () => setState(() {
+                                            _newSteps.removeAt(index);
+                                          }),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
+                                  IconButton(
+                                    icon: Icon(Icons.add_circle_outline),
+                                    onPressed: () {
+                                      setState(() {
+                                        _newSteps.add('');
+                                      });
+                                    },
                                   ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _newSteps[index] = value;
-                                    });
-                                  },
-                                ),
-                              ),
-                              IconButton(
-                                icon: Icon(Icons.remove_circle_outline),
-                                onPressed: () => setState(() {
-                                  _newSteps.removeAt(index);
-                                }),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                        IconButton(
-                          icon: Icon(Icons.add_circle_outline),
-                          onPressed: () {
-                            setState(() {
-                              _newSteps.add('');
-                            });
-                          },
-                        ),
-                      ],
-                    );
-                  },
+                                ],
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20),
+                          ElevatedButton(
+                            onPressed: _saveRecipe,
+                            child: Text('Save Recipe'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  
                 ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _saveRecipe,
-                  child: Text('Save Recipe'),
-                ),
-              ],
+              ),
             ),
           ),
         ),

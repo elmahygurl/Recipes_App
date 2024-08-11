@@ -74,7 +74,14 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('Assets/back0.PNG'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Center(child: CircularProgressIndicator()))
           : recipes.isEmpty
               ? Center(child: Text('No recipes available.'))
               : Container(

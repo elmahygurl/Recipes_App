@@ -54,7 +54,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               ingredients: List<String>.from(recipeData['ingredients']),
               steps: List<String>.from(recipeData['steps']),
               image: recipeData['imageUrl'],
-              imageType: '1',   //fetched from firebase
+              imageType: '1', //fetched from firebase
               author: recipeData['author'],
             ));
           }
@@ -88,7 +88,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       print("Error fetching data: $error");
     }
   }
-  
 
   void _signOut() async {
     String message = await _authService.signOut();
@@ -124,7 +123,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
       ingredients: List<String>.from(jsonMap['ingredients']),
       steps: List<String>.from(jsonMap['steps']),
       image: jsonMap['imageUrl'],
-      imageType: '1',  
+      imageType: '1',
       author: jsonMap['author'],
     );
   }
@@ -145,18 +144,20 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
           TextButton(
             onPressed: () async {
               String input = controller.text;
-              if (input.isEmpty) {
-                _showErrorDialog(context, 'Please enter your lucky number');
-              } else {
+              if (input.isEmpty || !RegExp(r'^\d+$').hasMatch(input)) {
+              _showErrorDialog(context, 'Please enter a valid lucky number');
+            }  else {
                 try {
                   int userInput = int.parse(input);
-                  int mappedNumber =
-                      11 + (userInput % 9); //map input to be from 11 to 19
-                  if (mappedNumber < 11) {
-                    mappedNumber = 11;
-                  } else if (mappedNumber > 19) {
-                    mappedNumber = 19;
-                  }
+                  // int mappedNumber =
+                  //     11 + (userInput % 9); //map input to be from 11 to 19
+                  // if (mappedNumber < 11) {
+                  //   mappedNumber = 11;
+                  // } else if (mappedNumber > 19) {
+                  //   mappedNumber = 19;
+                  // }
+                int mappedNumber = userInput;
+                mappedNumber = mappedNumber.clamp(11, 19); //ensure 11 <= mappedNumber <= 19
 
                   String recipeOfTheDay =
                       await aesHelper.getRecipeOfTheDay(mappedNumber);
@@ -166,7 +167,9 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RecipeDetailScreen(recipe: recipe),  //hena hatro7 bas no imagetype saved fel api
+                      builder: (context) => RecipeDetailScreen(
+                          recipe:
+                              recipe), 
                     ),
                   );
                 } catch (e) {
@@ -190,14 +193,13 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.restaurant),
-            onPressed: (){
-                    //Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => MyRecipesScreen()),
-                    );
-                  },
+            onPressed: () {
+              //Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyRecipesScreen()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(Icons.logout),
@@ -206,17 +208,24 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
         ],
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('Assets/back0.PNG'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Center(child: CircularProgressIndicator()))
           : recipes.isEmpty
               ? Center(child: Text('No recipes available.'))
               : Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('Assets/back0.PNG'),
-            fit: BoxFit.cover,
-          ),
-        ),
-                child: ListView.builder(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage('Assets/back0.PNG'),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: ListView.builder(
                     itemCount: recipes.length,
                     itemBuilder: (context, index) {
                       final recipe = recipes[index];
@@ -224,8 +233,8 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                           child: Container(
                         width: MediaQuery.of(context).size.width * 0.6,
                         height: 200,
-                        margin:
-                            EdgeInsets.symmetric(vertical: 6.0, horizontal: 16.0),
+                        margin: EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 16.0),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -274,13 +283,13 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                                           ),
                                         ),
                                         SizedBox(height: 8),
-                                      Text(
-                                        'By ${recipe.author}',
-                                        style: TextStyle(
-                                          fontStyle: FontStyle.italic,
-                                          fontSize: 14,
+                                        Text(
+                                          'By ${recipe.author}',
+                                          style: TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            fontSize: 14,
+                                          ),
                                         ),
-                                      ),
                                       ],
                                     ),
                                   ),
@@ -292,12 +301,13 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                       ));
                     },
                   ),
-              ),
+                ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromARGB(150, 223, 20, 114),
         child: Icon(Icons.add),
         onPressed: () {
-          showModalBottomSheet(backgroundColor: Color.fromARGB(251, 190, 119, 154),
+          showModalBottomSheet(
+            backgroundColor: Color.fromARGB(251, 190, 119, 154),
             context: context,
             builder: (context) => Wrap(
               children: [
@@ -352,7 +362,7 @@ Widget _buildRecipeImage(Recipe recipe) {
         ),
       );
     }
-  } 
+  }
   // If imageType is 1, use the URL string - i didnt put recipe.imageType == 1 &&  cuz in APi its not set
   else if (recipe.image.isNotEmpty) {
     return Image.network(
@@ -361,7 +371,7 @@ Widget _buildRecipeImage(Recipe recipe) {
       height: 200,
       fit: BoxFit.cover,
     );
-  } 
+  }
   // No image available
   else {
     return Container(

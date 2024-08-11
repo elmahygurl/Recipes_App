@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Recipes App',
         theme: ThemeData(
-          scaffoldBackgroundColor: Color.fromRGBO(80, 178, 243, 0.973),
+          scaffoldBackgroundColor: Color.fromRGBO(236, 238, 240, 0.973),   //incase a background image didnt load
           primaryColor: Color.fromARGB(201, 145, 91, 105),
           colorScheme: ColorScheme.fromSwatch().copyWith(
             primary: Color.fromARGB(201, 247, 150, 174),
