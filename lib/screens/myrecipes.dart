@@ -45,6 +45,21 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
     }
   }
 
+  Future<void> deleteRecipe(Recipe recipe) async {
+    try {
+      final box = Hive.box<Recipe>('user_recipes');
+      await box.delete(recipe.key); // Assuming `key` is the identifier for Hive
+      setState(() {
+        recipes.remove(recipe);
+      });
+    } catch (error) {
+      setState(() {
+        isLoading = false;
+      });
+      print("Error deleting recipe: $error");
+    }
+  }
+
   // helper method to decode base64 image string to Uint8List
   Uint8List? _decodeImage(String imageString) {
     try {
@@ -66,12 +81,6 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
             Navigator.pop(context);
           },
         ),
-        actions: <Widget>[
-          // IconButton(
-          //   icon: Icon(Icons.logout),
-          //   onPressed: _signOut,
-          // ),
-        ],
       ),
       body: isLoading
           ? Container(
@@ -122,7 +131,7 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
                               );
                             },
                             child: Card(
-                              elevation: 5,
+                              elevation: 10,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0),
                               ),
@@ -161,6 +170,12 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
                                         ],
                                       ),
                                     ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      deleteRecipe(recipe);
+                                    },
                                   ),
                                 ],
                               ),
