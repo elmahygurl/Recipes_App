@@ -25,6 +25,27 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
   Future<void> _saveRecipe() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null && _formKey.currentState!.validate()) {
+      //filter out empty ingredients and steps
+      _newIngredients.removeWhere((ingredient) => ingredient.trim().isEmpty);
+      _newSteps.removeWhere((step) => step.trim().isEmpty);
+
+      // validate at least one ingredient and one step
+      if (_newIngredients.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Please add at least one ingredient'),
+        ));
+        return;
+      }
+
+      if (_newSteps.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Please add at least one step'),
+        ));
+
+        return;
+      }
       _formKey.currentState!.save();
 
       final newRecipe = Recipe(
@@ -52,186 +73,202 @@ class _AddRecipeScreenState extends State<AddRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final textSize = screenWidth * 0.03;
+    final buttonHeight = screenHeight * 0.06;
+
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text('Add a New Recipe')),
       ),
-      body: Stack(
-        children:[ Container(
+      body: Stack(children: [
+        Container(
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage('Assets/back2.PNG'),
               fit: BoxFit.cover,
             ),
           ),
-          ),
-          SingleChildScrollView(
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IntrinsicHeight(
-                  child: Card(
-                    surfaceTintColor: Color.fromARGB(172, 70, 216, 65),
-                    elevation: 5,
-                    child:Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min, 
-                                children: [
-                                  TextFormField(
-                                    controller: _titleController,
-                                    decoration: InputDecoration(labelText: 'Title'),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter a title';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  TextFormField(
-                                    controller: _descriptionController,
-                                    decoration:
-                                        InputDecoration(labelText: 'Description'),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter a description';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  ImageInputField(
-                                    onImageChanged: (base64Image) {
-                                      setState(() {
-                                        _imageBase64 = base64Image;
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    'Ingredients',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  StatefulBuilder(
-                                    builder:
-                                        (BuildContext context, StateSetter setState) {
-                                      return Column(
-                                        children: [
-                                          ..._newIngredients
-                                              .asMap()
-                                              .entries
-                                              .map((entry) {
-                                            int index = entry.key;
-                                            String ingredient = entry.value;
-                                            return Row(
-                                              children: [
-                                                Expanded(
-                                                  child: TextFormField(
-                                                    initialValue: ingredient,
-                                                    decoration: InputDecoration(
-                                                      hintText: 'Enter ingredient',
-                                                    ),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        _newIngredients[index] = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  icon:
-                                                      Icon(Icons.remove_circle_outline),
-                                                  onPressed: () => setState(() {
-                                                    _newIngredients.removeAt(index);
-                                                  }),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
-                                          IconButton(
-                                            icon: Icon(Icons.add_circle_outline),
-                                            onPressed: () {
-                                              setState(() {
-                                                _newIngredients.add('');
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text(
-                                    'Steps',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  StatefulBuilder(
-                                    builder:
-                                        (BuildContext context, StateSetter setState) {
-                                      return Column(
-                                        children: [
-                                          ..._newSteps.asMap().entries.map((entry) {
-                                            int index = entry.key;
-                                            String step = entry.value;
-                                            return Row(
-                                              children: [
-                                                Expanded(
-                                                  child: TextFormField(
-                                                    initialValue: step,
-                                                    decoration: InputDecoration(
-                                                      hintText: 'Enter step',
-                                                    ),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        _newSteps[index] = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                                IconButton(
-                                                  icon:
-                                                      Icon(Icons.remove_circle_outline),
-                                                  onPressed: () => setState(() {
-                                                    _newSteps.removeAt(index);
-                                                  }),
-                                                ),
-                                              ],
-                                            );
-                                          }).toList(),
-                                          IconButton(
-                                            icon: Icon(Icons.add_circle_outline),
-                                            onPressed: () {
-                                              setState(() {
-                                                _newSteps.add('');
-                                              });
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(height: 20),
-                                  ElevatedButton(
-                                    onPressed: _saveRecipe,
-                                    child: Text('Save Recipe'),
-                                  ),
-                                ],
+        ),
+        SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(screenWidth * 0.03),
+            child: IntrinsicHeight(
+              child: Card(
+                surfaceTintColor: Color.fromARGB(172, 70, 216, 65),
+                elevation: 5,
+                child: Padding(
+                  padding: EdgeInsets.all(screenWidth * 0.03),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextFormField(
+                          controller: _titleController,
+                          decoration: InputDecoration(labelText: 'Title'),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a title';
+                            }
+                            return null;
+                          },
+                        ),
+                        TextFormField(
+                          controller: _descriptionController,
+                          decoration: InputDecoration(labelText: 'Description'),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter a description';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: screenWidth * 0.005),
+                        ImageInputField(
+                          onImageChanged: (base64Image) {
+                            setState(() {
+                              _imageBase64 = base64Image;
+                            });
+                          },
+                        ),
+                        SizedBox(height: screenWidth * 0.02),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Ingredients',
+                            style: TextStyle(
+                              fontSize: textSize,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      
+                        StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return Column(
+                              children: [
+                                ..._newIngredients.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  String ingredient = entry.value;
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          initialValue: ingredient,
+                                          decoration: InputDecoration(
+                                              hintText: 'Enter ingredient',
+                                              contentPadding:
+                                                  EdgeInsets.symmetric(
+                                                      vertical: screenHeight *
+                                                          0.003)),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _newIngredients[index] = value;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.remove_circle_outline),
+                                        onPressed: () => setState(() {
+                                          _newIngredients.removeAt(index);
+                                        }),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                                IconButton(
+                                  icon: Icon(Icons.add_circle_outline),
+                                  onPressed: () {
+                                    setState(() {
+                                      _newIngredients.add('');
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        SizedBox(height: screenHeight * 0.005),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            'Steps',
+                            style: TextStyle(
+                              fontSize: textSize,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        StatefulBuilder(
+                          builder:
+                              (BuildContext context, StateSetter setState) {
+                            return Column(
+                              children: [
+                                ..._newSteps.asMap().entries.map((entry) {
+                                  int index = entry.key;
+                                  String step = entry.value;
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          initialValue: step,
+                                          decoration: InputDecoration(
+                                            hintText: 'Enter step',
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical:
+                                                        screenHeight * 0.003),
+                                          ),
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _newSteps[index] = value;
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.remove_circle_outline),
+                                        onPressed: () => setState(() {
+                                          _newSteps.removeAt(index);
+                                        }),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                                IconButton(
+                                  icon: Icon(Icons.add_circle_outline),
+                                  onPressed: () {
+                                    setState(() {
+                                      _newSteps.add('');
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        SizedBox(height: screenHeight * 0.01),
+                        SizedBox(
+                          height: buttonHeight,
+                          child: ElevatedButton(
+                            onPressed: _saveRecipe,
+                            child: Text('Save Recipe',
+                                style: TextStyle(fontSize: textSize * 0.7)),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-        ]
-      ),
+          ),
+        ),
+      ]),
     );
   }
 }
