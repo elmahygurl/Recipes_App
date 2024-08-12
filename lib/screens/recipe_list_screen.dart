@@ -150,15 +150,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
               } else {
                 try {
                   int userInput = int.parse(input);
-                  // int mappedNumber =
-                  //     11 + (userInput % 9); //map input to be from 11 to 19
-                  // if (mappedNumber < 11) {
-                  //   mappedNumber = 11;
-                  // } else if (mappedNumber > 19) {
-                  //   mappedNumber = 19;
-                  //} /////  fails at 6,9,15,18,24
-                  // int mappedNumber = userInput;
-                  // mappedNumber = mappedNumber.clamp(11, 19); //ensure 11 <= mappedNumber <= 19
                   Random random = Random();
                   int mappedNumber = 11 + random.nextInt(9);
 

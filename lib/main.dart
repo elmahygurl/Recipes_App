@@ -9,9 +9,13 @@ import 'package:recipes_app/screens/signin.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:recipes_app/models/recipe.dart';
 
+
 Future<void> main() async { 
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+        // options: DefaultFirebaseOptions.currentPlatform, // Use this if you're using the generated options
+
+  );
   await Hive.initFlutter();
   Hive.registerAdapter(RecipeAdapter()); //registered the adapter
 // //delete and recreate the box to ensure fresh start
@@ -36,7 +40,7 @@ class MyApp extends StatelessWidget {
           Authenticationservice(FirebaseAuth.instance).authStateChanges,
       initialData: null,
       child: MaterialApp(
-        debugShowCheckedModeBanner: false,
+        // debugShowCheckedModeBanner: false,
         title: 'Recipes App',
         theme: ThemeData(
           scaffoldBackgroundColor: Color.fromRGBO(236, 238, 240, 0.973),   //incase a background image didnt load

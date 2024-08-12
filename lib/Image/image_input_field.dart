@@ -61,7 +61,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
               label: Text('Upload from Gallery'),
               onPressed: _pickImageFromGallery,
             ),
-            SizedBox(width: screenWidth*0.3),
+            SizedBox(width: screenWidth*0.1),  /////
             ElevatedButton.icon(
               icon: Icon(Icons.camera_alt),
               label: Text('Take a Picture'),
