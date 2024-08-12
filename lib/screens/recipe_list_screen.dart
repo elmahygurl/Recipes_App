@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -145,8 +146,8 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
             onPressed: () async {
               String input = controller.text;
               if (input.isEmpty || !RegExp(r'^\d+$').hasMatch(input)) {
-              _showErrorDialog(context, 'Please enter a valid lucky number');
-            }  else {
+                _showErrorDialog(context, 'Please enter a valid lucky number');
+              } else {
                 try {
                   int userInput = int.parse(input);
                   // int mappedNumber =
@@ -155,9 +156,11 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   //   mappedNumber = 11;
                   // } else if (mappedNumber > 19) {
                   //   mappedNumber = 19;
-                  // }
-                int mappedNumber = userInput;
-                mappedNumber = mappedNumber.clamp(11, 19); //ensure 11 <= mappedNumber <= 19
+                  //} /////  fails at 6,9,15,18,24
+                  // int mappedNumber = userInput;
+                  // mappedNumber = mappedNumber.clamp(11, 19); //ensure 11 <= mappedNumber <= 19
+                  Random random = Random();
+                  int mappedNumber = 11 + random.nextInt(9);
 
                   String recipeOfTheDay =
                       await aesHelper.getRecipeOfTheDay(mappedNumber);
@@ -167,7 +170,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RecipeDetailScreen(recipe:recipe), 
+                      builder: (context) => RecipeDetailScreen(recipe: recipe),
                     ),
                   );
                 } catch (e) {
@@ -192,7 +195,6 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
     final imageHeight = screenHeight * 0.2;
     final fontSizeTitle = screenWidth * 0.03;
     final fontSizeDescription = screenWidth * 0.02;
-
 
     return Scaffold(
       appBar: AppBar(
@@ -238,8 +240,8 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                       final recipe = recipes[index];
                       return Center(
                           child: Container(
-                        width: screenWidth* 0.6,
-                        height: screenHeight*0.17,  
+                        width: screenWidth * 0.6,
+                        height: screenHeight * 0.17,
                         margin: EdgeInsets.symmetric(
                             vertical: screenHeight * 0.004,
                             horizontal: screenWidth * 0.05),
@@ -256,19 +258,22 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                           child: Card(
                             elevation: 5,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(screenWidth*0.03),
+                              borderRadius:
+                                  BorderRadius.circular(screenWidth * 0.03),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.horizontal(
-                                      left: Radius.circular(screenWidth*0.03)),
-                                  child: _buildRecipeImage(recipe,imageWidth,imageHeight),
+                                      left:
+                                          Radius.circular(screenWidth * 0.03)),
+                                  child: _buildRecipeImage(
+                                      recipe, imageWidth, imageHeight),
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding:  EdgeInsets.all(screenWidth*0.02),
+                                    padding: EdgeInsets.all(screenWidth * 0.02),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -281,7 +286,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                                             fontSize: fontSizeTitle,
                                           ),
                                         ),
-                                        SizedBox(height: screenHeight*0.003),
+                                        SizedBox(height: screenHeight * 0.003),
                                         Text(
                                           recipe.description,
                                           maxLines: 2,
@@ -291,12 +296,12 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                                             fontSize: fontSizeDescription,
                                           ),
                                         ),
-                                        SizedBox(height: screenHeight*0.003),
+                                        SizedBox(height: screenHeight * 0.003),
                                         Text(
                                           'By: ${recipe.author}',
                                           style: TextStyle(
                                             fontStyle: FontStyle.italic,
-                                            fontSize: screenWidth*0.018 ,
+                                            fontSize: screenWidth * 0.018,
                                           ),
                                         ),
                                       ],
@@ -349,7 +354,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   }
 }
 
-Widget _buildRecipeImage(Recipe recipe,double width,double height) {
+Widget _buildRecipeImage(Recipe recipe, double width, double height) {
   // If imageType is 0, use the base64-encoded string
   if (recipe.imageType == '0' && recipe.image.isNotEmpty) {
     try {
