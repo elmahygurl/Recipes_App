@@ -49,6 +49,15 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final padding = mediaQuery.padding;
+    final appBarHeight = mediaQuery.padding.top + kToolbarHeight;
+    final borderWidth = screenWidth * 0.005;
+
+
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -60,31 +69,32 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(200),
+            padding: EdgeInsets.symmetric(horizontal: screenWidth*0.2),
             child: Form(
               key: _formKey,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  SizedBox(height: appBarHeight),
                   TextFormField(
                     controller: _emailController,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: screenWidth*0.03),
                     decoration: InputDecoration(
                       labelText: 'Email Address',
-                      labelStyle: TextStyle(color: Colors.white, fontSize: 20),
+                      labelStyle: TextStyle(color: Colors.white, fontSize: screenWidth*0.03),
                       iconColor: Color.fromARGB(248, 223, 238, 235),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(screenWidth*0.01),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Colors.white70, width: 1.5),
-                        borderRadius: BorderRadius.circular(8.0),
+                            BorderSide(color: Colors.white70, width: borderWidth),
+                        borderRadius: BorderRadius.circular(screenWidth*0.01),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Colors.white70, width: 1.0),
-                        borderRadius: BorderRadius.circular(8.0),
+                            BorderSide(color: Colors.white70, width: borderWidth),
+                        borderRadius: BorderRadius.circular(screenWidth*0.01),
                       ),
                     ),
                     validator: (value) {
@@ -98,26 +108,26 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 24),
+                  SizedBox(height: screenHeight*0.02),
                   TextFormField(
                     controller: _passwordController,
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(color: Colors.white, fontSize: screenWidth*0.03),
                     decoration: InputDecoration(
                       fillColor: Color.fromARGB(100, 255, 255, 255),
                       labelText: 'Password',
-                      labelStyle: TextStyle(color: Colors.white, fontSize: 20),
+                      labelStyle: TextStyle(color: Colors.white, fontSize: screenWidth*0.03),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(screenWidth*0.01),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Colors.white70, width: 1.5),
-                        borderRadius: BorderRadius.circular(8.0),
+                            BorderSide(color: Colors.white70, width: borderWidth),
+                        borderRadius: BorderRadius.circular(screenWidth*0.01),
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderSide:
-                            BorderSide(color: Colors.white70, width: 1.0),
-                        borderRadius: BorderRadius.circular(8.0),
+                            BorderSide(color: Colors.white70, width: borderWidth),
+                        borderRadius: BorderRadius.circular(screenWidth*0.01),
                       ),
                     ),
                     obscureText: true,
@@ -128,24 +138,24 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 24),
+                  SizedBox(height: screenHeight*0.02),
                   ElevatedButton(
                     onPressed: _signIn,
                     style: ElevatedButton.styleFrom(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.05, vertical: screenHeight * 0.02),
                       backgroundColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
+                        borderRadius: BorderRadius.circular(screenWidth * 0.01),
                       ),
                       elevation: 8,
                       side: BorderSide(
-                          color: Color.fromARGB(255, 16, 17, 17), width: 2.0),
+                          color: Color.fromARGB(255, 16, 17, 17), width: borderWidth),
                     ),
                     child: Text(
                       'Sign In',
                       style: TextStyle(
-                          fontSize: 22,
+                          fontSize: screenWidth*0.03,
                           color: Color.fromARGB(239, 157, 237, 243)),
                     ),
                   ),

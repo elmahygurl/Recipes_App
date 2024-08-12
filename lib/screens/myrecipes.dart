@@ -48,7 +48,7 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
   Future<void> deleteRecipe(Recipe recipe) async {
     try {
       final box = Hive.box<Recipe>('user_recipes');
-      await box.delete(recipe.key); // Assuming `key` is the identifier for Hive
+      await box.delete(recipe.key); //key is the identifier for Hive
       setState(() {
         recipes.remove(recipe);
       });
@@ -117,9 +117,9 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
                       return Center(
                         child: Container(
                           width: MediaQuery.of(context).size.width * 0.6,
-                          height: 200,
+                          height: MediaQuery.of(context).size.height * 0.16,
                           margin: EdgeInsets.symmetric(
-                              vertical: 6.0, horizontal: 16.0),
+                              vertical: MediaQuery.of(context).size.height * 0.006, horizontal: MediaQuery.of(context).size.width * 0.2),
                           child: GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -133,19 +133,19 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
                             child: Card(
                               elevation: 10,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
+                                borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width * 0.02),
                               ),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.horizontal(
-                                        left: Radius.circular(12)),
+                                        left: Radius.circular(MediaQuery.of(context).size.width * 0.02)),
                                     child: imageWidget,
                                   ),
                                   Expanded(
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: EdgeInsets.all(MediaQuery.of(context).size.width * 0.02),
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -154,17 +154,17 @@ class _MyRecipesScreenState extends State<MyRecipesScreen> {
                                             recipe.title,
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              fontSize: 20,
+                                              fontSize: MediaQuery.of(context).size.width * 0.03,
                                             ),
                                           ),
-                                          SizedBox(height: 4),
+                                          SizedBox(height: MediaQuery.of(context).size.height*0.001),
                                           Text(
                                             recipe.description,
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                             style: TextStyle(
                                               fontWeight: FontWeight.normal,
-                                              fontSize: 16,
+                                              fontSize: MediaQuery.of(context).size.width*0.02,
                                             ),
                                           ),
                                         ],

@@ -44,12 +44,16 @@ class _ImageInputFieldState extends State<ImageInputField> {
     return base64Encode(bytes);
   }
 
-  @override
+  @override 
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final buttonWidth = screenWidth * 0.009;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 10),
+        SizedBox(height: screenHeight*0.002),
         Row(
           children: [
             ElevatedButton.icon(
@@ -57,11 +61,14 @@ class _ImageInputFieldState extends State<ImageInputField> {
               label: Text('Upload from Gallery'),
               onPressed: _pickImageFromGallery,
             ),
-            SizedBox(width: 10),
+            SizedBox(width: screenWidth*0.3),
             ElevatedButton.icon(
               icon: Icon(Icons.camera_alt),
               label: Text('Take a Picture'),
               onPressed: _takePicture,
+              // style: ElevatedButton.styleFrom(
+              //   minimumSize: Size(buttonWidth, buttonWidth*2), 
+              // ),
             ),
           ],
         ),
@@ -70,7 +77,7 @@ class _ImageInputFieldState extends State<ImageInputField> {
             padding: const EdgeInsets.only(top: 10.0),
             child: Image.file(
               _imageFile!,
-              height: 150,
+              height: screenHeight * 0.2,
               width: double.infinity,
               fit: BoxFit.cover,
             ),

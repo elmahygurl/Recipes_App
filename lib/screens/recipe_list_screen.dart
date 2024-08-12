@@ -167,9 +167,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => RecipeDetailScreen(
-                          recipe:
-                              recipe), 
+                      builder: (context) => RecipeDetailScreen(recipe:recipe), 
                     ),
                   );
                 } catch (e) {
@@ -187,6 +185,15 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final imageWidth = screenWidth * 0.2;
+    final imageHeight = screenHeight * 0.2;
+    final fontSizeTitle = screenWidth * 0.03;
+    final fontSizeDescription = screenWidth * 0.02;
+
+
     return Scaffold(
       appBar: AppBar(
         title: Center(child: Text('Recipe List')),
@@ -231,10 +238,11 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                       final recipe = recipes[index];
                       return Center(
                           child: Container(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        height: 200,
+                        width: screenWidth* 0.6,
+                        height: screenHeight*0.17,  
                         margin: EdgeInsets.symmetric(
-                            vertical: 6.0, horizontal: 16.0),
+                            vertical: screenHeight * 0.004,
+                            horizontal: screenWidth * 0.05),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -248,46 +256,47 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                           child: Card(
                             elevation: 5,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
+                              borderRadius: BorderRadius.circular(screenWidth*0.03),
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.horizontal(
-                                      left: Radius.circular(12)),
-                                  child: _buildRecipeImage(recipe),
+                                      left: Radius.circular(screenWidth*0.03)),
+                                  child: _buildRecipeImage(recipe,imageWidth,imageHeight),
                                 ),
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding:  EdgeInsets.all(screenWidth*0.02),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           recipe.title,
+                                          maxLines: 2,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            fontSize: fontSizeTitle,
                                           ),
                                         ),
-                                        SizedBox(height: 4),
+                                        SizedBox(height: screenHeight*0.003),
                                         Text(
                                           recipe.description,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                             fontWeight: FontWeight.normal,
-                                            fontSize: 16,
+                                            fontSize: fontSizeDescription,
                                           ),
                                         ),
-                                        SizedBox(height: 8),
+                                        SizedBox(height: screenHeight*0.003),
                                         Text(
-                                          'By ${recipe.author}',
+                                          'By: ${recipe.author}',
                                           style: TextStyle(
                                             fontStyle: FontStyle.italic,
-                                            fontSize: 14,
+                                            fontSize: screenWidth*0.018 ,
                                           ),
                                         ),
                                       ],
@@ -340,22 +349,22 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
   }
 }
 
-Widget _buildRecipeImage(Recipe recipe) {
+Widget _buildRecipeImage(Recipe recipe,double width,double height) {
   // If imageType is 0, use the base64-encoded string
   if (recipe.imageType == '0' && recipe.image.isNotEmpty) {
     try {
       Uint8List imageBytes = base64Decode(recipe.image);
       return Image.memory(
         imageBytes,
-        width: 120,
-        height: 200,
+        width: width,
+        height: height,
         fit: BoxFit.cover,
       );
     } catch (e) {
       // Handle decoding errors
       return Container(
-        width: 120,
-        height: 200,
+        width: width,
+        height: height,
         color: Colors.grey,
         child: Center(
           child: Text('Error decoding image'),
@@ -367,16 +376,16 @@ Widget _buildRecipeImage(Recipe recipe) {
   else if (recipe.image.isNotEmpty) {
     return Image.network(
       recipe.image,
-      width: 120,
-      height: 200,
+      width: width,
+      height: height,
       fit: BoxFit.cover,
     );
   }
   // No image available
   else {
     return Container(
-      width: 120,
-      height: 200,
+      width: width,
+      height: height,
       color: Colors.grey,
       child: Center(
         child: Text('No Image Available'),

@@ -32,6 +32,16 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final imageHeight = screenHeight * 0.4;
+    final fontSizeTitle = screenWidth * 0.04;
+    final fontSizeSubtitle = screenWidth * 0.026;
+    final ingredientPadding = EdgeInsets.symmetric(
+        horizontal: screenWidth * 0.02, vertical: screenHeight * 0.008);
+    final cardMargin = EdgeInsets.symmetric(vertical: screenHeight * 0.008);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.recipe.title),
@@ -45,69 +55,68 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: EdgeInsets.all(screenWidth * 0.015),
           child: ListView(
             children: [
               Container(
-                height: MediaQuery.of(context).size.height * 0.4,
+                height: imageHeight,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(15.0),
-                  child: _buildImage(),
+                  borderRadius: BorderRadius.circular(screenWidth * 0.02),
+                  child: _buildImage(screenWidth, screenHeight),
                 ),
               ),
-              SizedBox(height: 10),
+              SizedBox(height: screenHeight * 0.02),
               Text(
                 'By ${widget.recipe.author}',
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
-                  fontSize: 20,
+                  fontSize: fontSizeSubtitle,
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: screenHeight * 0.004),
               Text(
                 'Ingredients',
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: fontSizeTitle,
                   fontWeight: FontWeight.bold,
                   color: const Color.fromARGB(255, 26, 23, 22),
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: screenHeight * 0.001),
               Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
+                spacing: screenWidth * 0.009,
+                runSpacing: screenWidth * 0.02,
                 children: widget.recipe.ingredients.map((ingredient) {
                   return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: ingredientPadding,
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(8.0),
+                      borderRadius: BorderRadius.circular(screenWidth * 0.02),
                       color: const Color.fromARGB(255, 255, 177, 177),
                     ),
                     child: Text(
                       ingredient,
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: fontSizeSubtitle * 0.9),
                     ),
                   );
                 }).toList(),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: screenHeight * 0.02),
               Text(
                 'Steps',
                 style: TextStyle(
-                  fontSize: 30,
+                  fontSize: fontSizeTitle,
                   fontWeight: FontWeight.bold,
                   color: const Color.fromARGB(255, 15, 15, 15),
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: screenHeight * 0.001),
               ...widget.recipe.steps.asMap().entries.map((entry) {
                 int idx = entry.key;
                 String step = entry.value;
-        
+
                 return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  margin: cardMargin,
                   child: ListTile(
                     tileColor: const Color.fromARGB(255, 255, 177, 177),
                     leading: Icon(
@@ -118,12 +127,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
                     ),
                     title: Text(
                       '${idx + 1}. $step',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: fontSizeSubtitle * 0.9),
                     ),
                     onTap: () {
                       _toggleStepCompletion(idx);
                     },
-                    
                   ),
                 );
               }).toList(),
@@ -134,15 +142,56 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     );
   }
 
-  Widget _buildImage() {
-  if (widget.recipe.imageType == '0' && widget.recipe.image.isNotEmpty) {
-    try {
-      Uint8List imageBytes = base64Decode(widget.recipe.image);
-    
+  Widget _buildImage(double allWidth, double allHeight) {
+    final paddingValue = allWidth * 0.02;
+    if (widget.recipe.imageType == '0' && widget.recipe.image.isNotEmpty) {
+      try {
+        Uint8List imageBytes = base64Decode(widget.recipe.image);
+
+        return Stack(
+          children: [
+            PhotoView(
+              imageProvider: MemoryImage(imageBytes),
+              minScale: PhotoViewComputedScale.contained,
+              maxScale: PhotoViewComputedScale.contained * 2,
+              initialScale: PhotoViewComputedScale.contained,
+              backgroundDecoration: BoxDecoration(
+                color: Colors.transparent,
+              ),
+            ),
+            Positioned(
+              bottom: paddingValue,
+              right: paddingValue,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: paddingValue / 4, vertical: paddingValue/2),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(allWidth*0.006),
+                ),
+                child: Text(
+                  'Pinch to zoom',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: allWidth*0.02,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      } catch (e) {
+        return Container(
+          color: Colors.grey,
+          child: Center(
+            child: Text('Error decoding image'),
+          ),
+        );
+      }
+    } else if (widget.recipe.image.isNotEmpty) {
       return Stack(
         children: [
           PhotoView(
-            imageProvider: MemoryImage(imageBytes),
+            imageProvider: NetworkImage(widget.recipe.image),
             minScale: PhotoViewComputedScale.contained,
             maxScale: PhotoViewComputedScale.contained * 2,
             initialScale: PhotoViewComputedScale.contained,
@@ -151,72 +200,32 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             ),
           ),
           Positioned(
-            bottom: 10,
-            right: 10,
+            bottom: paddingValue,
+            right: paddingValue,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: EdgeInsets.symmetric(horizontal: paddingValue / 4, vertical: paddingValue/2),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.7),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(allWidth*0.006),
               ),
               child: Text(
                 'Pinch to zoom',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 14,
+                  fontSize: allWidth*0.02,
                 ),
               ),
             ),
           ),
         ],
       );
-    } catch (e) {
+    } else {
       return Container(
         color: Colors.grey,
         child: Center(
-          child: Text('Error decoding image'),
+          child: Text('No Image Available'),
         ),
       );
     }
-  } else if (widget.recipe.image.isNotEmpty) {
-    return Stack(
-      children: [
-        PhotoView(
-          imageProvider: NetworkImage(widget.recipe.image),
-          minScale: PhotoViewComputedScale.contained,
-          maxScale: PhotoViewComputedScale.contained * 2,
-          initialScale: PhotoViewComputedScale.contained,
-          backgroundDecoration: BoxDecoration(
-            color: Colors.transparent,
-          ),
-        ),
-        Positioned(
-          bottom: 10,
-          right: 10,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.7),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              'Pinch to zoom',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  } else {
-    return Container(
-      color: Colors.grey,
-      child: Center(
-        child: Text('No Image Available'),
-      ),
-    );
   }
-}  
 }
