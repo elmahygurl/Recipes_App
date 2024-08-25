@@ -24,7 +24,6 @@ A Flutter application that allows users to authenticate, view a list of recipes 
 Before you begin, ensure you have the following installed on your machine:
 
 - **Flutter SDK:** [Installation Guide](https://flutter.dev/docs/get-started/install)
-- **Firebase Account:** [Firebase Console](https://console.firebase.google.com/)
 - **IDE:** Such as [Android Studio](https://developer.android.com/studio), [VS Code](https://code.visualstudio.com/), or others.
 
 ### Installation
