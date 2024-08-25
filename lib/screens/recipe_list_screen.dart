@@ -18,17 +18,43 @@ class RecipeListScreen extends StatefulWidget {
   State<RecipeListScreen> createState() => _RecipeListScreenState();
 }
 
-class _RecipeListScreenState extends State<RecipeListScreen> {
+class _RecipeListScreenState extends State<RecipeListScreen>
+    with SingleTickerProviderStateMixin {
   List<Recipe> recipes = [];
   bool isLoading = true;
   final Authenticationservice _authService =
       Authenticationservice(FirebaseAuth.instance);
   final AESHelper aesHelper = AESHelper();
+  AnimationController? _animationController;
+
+  Animation<double>? _animation;
 
   @override
   void initState() {
     super.initState();
     fetchRecipes();
+
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    );
+
+    _animation = Tween<double>(begin: 0, end: 15)
+        .chain(CurveTween(curve: Curves.easeInOut))
+        .animate(_animationController!)
+      ..addListener(() {
+        setState(() {});
+      });
+
+
+    _animationController!.repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _animationController?.dispose();
+
+    super.dispose();
   }
 
   Future<void> fetchRecipes() async {
@@ -307,36 +333,44 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                     },
                   ),
                 ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromARGB(150, 223, 20, 114),
-        child: Icon(Icons.add),
-        onPressed: () {
-          showModalBottomSheet(
-            backgroundColor: Color.fromARGB(251, 190, 119, 154),
-            context: context,
-            builder: (context) => Wrap(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.add),
-                  title: Text('Add Recipe'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AddRecipeScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.star),
-                  title: Text('Get Recipe of the Day'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showRecipeOfTheDayDialog();
-                  },
-                ),
-              ],
+      floatingActionButton: AnimatedBuilder(
+        animation: _animationController!,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, -_animation!.value),
+            child: FloatingActionButton(
+              backgroundColor: Color.fromARGB(150, 223, 20, 114),
+              child: Icon(Icons.add),
+              onPressed: () {
+                showModalBottomSheet(
+                  backgroundColor: Color.fromARGB(251, 190, 119, 154),
+                  context: context,
+                  builder: (context) => Wrap(
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.add),
+                        title: Text('Add Recipe'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AddRecipeScreen()),
+                          );
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.star),
+                        title: Text('Get Recipe of the Day'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _showRecipeOfTheDayDialog();
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           );
         },
