@@ -15,6 +15,13 @@ A Flutter application that allows users to authenticate, view a list of recipes 
 
 
 ## Screenshots
+![Screenshot1](https://github.com/user-attachments/assets/b32989d8-7170-4bf8-ba76-3a45301535ef)
+![Screenshot2](https://github.com/user-attachments/assets/e8c3672e-aa47-4e71-b3ed-e0153e3d7189)
+![Screenshot3](https://github.com/user-attachments/assets/5cc5f827-864d-4fb9-8b4d-f93b29f8123b)
+![Screenshot4](https://github.com/user-attachments/assets/1a36a8d5-c1ce-4e56-b7f7-8bdb338a973b)
+
+
+
 
 
 ## Getting Started
